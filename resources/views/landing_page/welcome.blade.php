@@ -36,7 +36,7 @@
         </div>
 
         <!-- 2. CONTENEDOR INTERACTIVO (REGLA EN GRID: FUERZA 2 COLUMNAS HORIZONTALES) -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; width: 100%; max-w: 900px; align-items: center; justify-items: center;" class="mb-12">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; width: 100%; max-width: 900px; align-items: center; justify-items: center;" class="mb-12">
 
             <!-- COLUMNA A: EMBLEMA EN ROMBO -->
             <div id="emblema-rombo" style="position: relative; width: 320px; height: 320px; flex-shrink: 0; user-select: none;">
@@ -136,7 +136,7 @@
                 </div>
 
                 <div class="pt-3 border-t border-slate-800">
-                    <a id="game-button" href="#" class="w-full py-2.5 px-4 rounded-xl font-bold text-center text-xs bg-blue-500 hover:bg-blue-400 text-slate-950 transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg">
+                    <a id="game-button" href="#" class="w-full py-2.5 px-4 rounded-xl font-bold text-center text-xs bg-blue-300 hover:bg-blue-400  transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg">
                         <span>INICIAR MODO DE JUEGO</span>
                     </a>
                 </div>
@@ -145,24 +145,6 @@
         </div>
 
     </main>
-
-    <!-- ================= 3. SECCIÓN INFERIOR DE MODOS ================= -->
-    <section id="modos" class="relative z-10 w-full py-10 px-6 border-t border-slate-800/80 bg-slate-950/40 backdrop-blur-sm">
-        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-            <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80">
-                <div class="text-amber-400 font-alchemy text-lg font-bold mb-1">01. Alquimia</div>
-                <p class="text-xs text-slate-300">Combina elementos base como Fuego y Agua para sintetizar nuevos astros[cite: 1].</p>
-            </div>
-            <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80">
-                <div class="text-purple-400 font-alchemy text-lg font-bold mb-1">02. Zodiaco</div>
-                <p class="text-xs text-slate-300">Posiciona cuerpos celestes sobre los 12 signos del zodiaco para modificar escalas sonoras.</p>
-            </div>
-            <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80">
-                <div class="text-cyan-400 font-alchemy text-lg font-bold mb-1">03. Música</div>
-                <p class="text-xs text-slate-300">El sistema solar funciona como una partitura circular interactiva.</p>
-            </div>
-        </div>
-    </section>
 
     <!-- ================= FOOTER ================= -->
     <footer class="relative z-10">
@@ -175,31 +157,31 @@
             'centro': {
                 badge: 'Modo Principal',
                 title: 'NÚCLEO DE TRANSMUTACIÓN',
-                desc: 'El centro neurálgico donde convergen todas las fuerzas elementales.',
+                desc: 'El centro neurálgico donde convergen todas las fuerzas elementales[cite: 8].',
                 route: '#'
             },
             'alquimia': {
                 badge: 'Combinación Elemental',
                 title: 'MODO ALQUIMIA & OUROBOROS',
-                desc: 'Combina elementos básicos como Fuego, Agua, Tierra y Aire para sintetizar nuevos astros y descubrir recetas místicas.',
+                desc: 'Combina elementos básicos como Fuego, Agua, Tierra y Aire para sintetizar nuevos astros y descubrir recetas místicas[cite: 8].',
                 route: '{{ Route::has("game.alquimia") ? route("game.alquimia") : "#" }}'
             },
             'zodiaco': {
                 badge: 'Astrofísica Mística',
                 title: 'MODO ZODIACO & CONSTELACIONES',
-                desc: 'Posiciona los cuerpos celestes en los 12 signos del zodiaco para alinear las constelaciones.',
+                desc: 'Posiciona los cuerpos celestes en los 12 signos del zodiaco para alinear las constelaciones[cite: 8].',
                 route: '{{ Route::has("game.zodiaco") ? route("game.zodiaco") : "#" }}'
             },
             'musica': {
                 badge: 'Harmonía Esferas',
                 title: 'MODO PARTITURA & MELODÍA',
-                desc: 'El sistema solar funciona como una partitura circular interactiva basada en frecuencias armónicas.',
-                route: '{{ Route::has("game.musica") ? route("game.musica") : "#" }}'
+                desc: 'El sistema solar funciona como una partitura circular interactiva basada en frecuencias armónicas[cite: 8].',
+                route: '{{ route("game.musica") }}'
             },
             'elemento': {
                 badge: 'Desafío Final',
                 title: 'MODO QUINTO ELEMENTO',
-                desc: 'Equilibra las cargas energéticas del círculo alquímico antes de que la materia se desestabilice por completo.',
+                desc: 'Equilibra las cargas energéticas del círculo alquímico antes de que la materia se desestabilice por completo[cite: 8].',
                 route: '{{ Route::has("game.elemento") ? route("game.elemento") : "#" }}'
             }
         };

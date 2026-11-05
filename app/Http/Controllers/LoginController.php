@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Usuari;
+
+
+class LoginController extends Controller
+{
+    public function showLogin()
+    {
+        return view('auth.login.login');
+
+    }
+
+    public function showRegister()
+    {
+        return view('auth.login.register');
+
+    }
+
+    public function login(Request $request)
+    {
+        $usuari = Usuari::where('name', $request-> input('name'))-> first();
+
+        if($usuari && Hash::check($request-> input('password'), $usuari->password))
+            {
+                Auth::login($usuari);
+                $response = redirect('/');
+            }
+            else {
+                session()->flash('error', 'contraseña incorrecta macho pon-la bien');
+                $response  = redirect()->back()->withInput();
+            return back()->withErrors([
+            'name' => 'Este usuario no exite ni ha existido ni existira si puedo evitarlo'
+                    ]);
+            }
+        
+        return $response;
+    }
+
+    public function register(Request $request)
+    {
+        $user = Usuari::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role_id' => 0, // 0 = Jugador, 1 = Admin
+            'juego1' => 0,
+            'juego2' => 0,
+            'juego3' => 0,
+            'juego4' => 0,
+        ]);
+
+        Auth::login($user);
+
+        return redirect()->route('home');
+
+
+    }
+
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
+}

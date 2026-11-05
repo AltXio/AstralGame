@@ -1,0 +1,219 @@
+/* Layout general a pantalla completa sin scroll */
+.ocarina-game-viewport {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+/* Área principal flex en 2 columnas */
+.ocarina-main-layout {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 70px);
+    padding: 1rem;
+    gap: 1.5rem;
+    overflow: hidden;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Layout general a pantalla completa sin scroll */
+.ocarina-game-viewport {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    background-color: transparent !important;
+}
+
+/* Área principal flex en 2 columnas */
+.ocarina-main-layout {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 70px);
+    padding: 1rem;
+    gap: 1.5rem;
+    overflow: hidden;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    background: transparent !important;
+}
+
+/* Sidebar de tarjetas totalmente transparente */
+.ocarina-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    background: transparent !important;
+    border: 1px solid rgba(111, 155, 255, 0.3);
+    border-radius: 1.25rem;
+    padding: 1rem;
+    box-shadow: 0 0 20px rgba(7, 10, 34, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Área de trabajo totalmente transparente */
+.ocarina-workspace {
+    flex: 1;
+    position: relative;
+    background: transparent !important;
+    border: 1px solid rgba(111, 155, 255, 0.2);
+    border-radius: 1.25rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Barra de controles superior con fondo sutilmente traslúcido */
+.ocarina-controls {
+    position: absolute;
+    top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 30;
+    background: rgba(7, 10, 34, 0.3) !important;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(111, 155, 255, 0.3);
+
+}
+
+/* Tarjeta lateral de Planetas */
+.ocarina-planet-card {
+    background: rgba(111, 155, 255, 0.05) !important; /* Muy ligero para ver el fondo */
+    border: 1.5px solid rgba(111, 155, 255, 0.25);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    cursor: grab;
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.ocarina-planet-card:hover {
+    border-color: #6f9bff;
+    box-shadow: 0 0 15px rgba(111, 155, 255, 0.3);
+    background: rgba(111, 155, 255, 0.15) !important;
+}
+
+/* Contenedor del Sistema Solar HTML */
+.solar-system-dom {
+    position: relative;
+    width: min(65vh, 500px);
+    height: min(65vh, 500px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: transparent;
+}
+
+/* Capa contenedora de Órbitas */
+.orbits-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+/* Anillos de órbita celestes */
+.orbit-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(111, 155, 255, 0.3);
+    box-shadow: 0 0 8px rgba(111, 155, 255, 0.1);
+    pointer-events: auto;
+}
+
+/* Sol Central */
+.ocarina-sun-core {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff3a1 0%, #ffb347 50%, #ff5722 100%);
+    box-shadow: 0 0 35px rgba(255, 179, 71, 0.8), 0 0 70px rgba(255, 87, 34, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    z-index: 20;
+    transition: all 0.3s ease;
+}
+
+.ocarina-sun-core:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 50px rgba(255, 179, 71, 1);
+}
+
+.ocarina-sun-core.playing {
+    box-shadow: 0 0 50px #4cc9f0, 0 0 80px rgba(76, 201, 240, 0.7);
+    border-color: #4cc9f0;
+}
+
+/* Planeta HTML en el tablero */
+.placed-planet {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 15;
+    pointer-events: auto;
+    transition: box-shadow 0.3s ease;
+}
+
+.placed-planet-label {
+    position: absolute;
+    bottom: -18px;
+    white-space: nowrap;
+    font-size: 11px;
+    color: #d3dbea;
+    font-family: 'Jost', sans-serif;
+    pointer-events: none;
+}
+
+/* Tarjeta lateral de Planetas totalmente transparente */
+.ocarina-planet-card {
+    background: transparent;
+    border: 1.5px solid rgba(111, 155, 255, 0.25);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    cursor: grab;
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.ocarina-planet-card:hover {
+    border-color: #6f9bff;
+    box-shadow: 0 0 15px rgba(111, 155, 255, 0.3);
+    background: rgba(111, 155, 255, 0.05);
+}
+
+.ocarina-preview-sphere {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: inset -4px -4px 8px rgba(0,0,0,0.8), 0 0 10px var(--glow-color);
+    background: radial-gradient(circle at 35% 35%, var(--glow-color), #070a22);
+    flex-shrink: 0;
+}

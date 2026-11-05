@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -17,6 +14,16 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // ID de Rol como 1 BYTE (unsignedTinyInteger): 0 = admin, 1 = jugador (por defecto 1)
+            $table->unsignedTinyInteger('role_id')->default(1);
+
+            // 1 byte cada uno para el progreso de los juegos (0 o 1)
+            $table->unsignedTinyInteger('juego1')->default(0); // Alquimia
+            $table->unsignedTinyInteger('juego2')->default(0); // Zodiaco
+            $table->unsignedTinyInteger('juego3')->default(0); // Música
+            $table->unsignedTinyInteger('juego4')->default(0); // Quinto Elemento
+
             $table->rememberToken();
             $table->timestamps();
         });
@@ -37,9 +44,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

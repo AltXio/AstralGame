@@ -6,10 +6,42 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Fuentes extraídas exactamente de los prototipos */
+    --font-sans: 'Jost', system-ui, sans-serif;
+    --font-display: 'Marcellus', Georgia, serif;
+
+    /* Tonos plata y neutros */
+    --color-plata: #d3dbea;
+    --color-plata-suave: #93a0bd;
+    --color-gris-galactico: #2d3548; /* Gris galáctico para destacar la vista activa */
+
+    /* Acentos de interfaz */
+    --color-azul-linea: #6f9bff;
+
+    /* Elementos Alquímicos de los prototipos */
+    --color-fuego: #ff8a5c;
+    --color-agua: #4cc9f0;
+    --color-tierra: #8fcf8a;
+    --color-aire: #c0a9ff;
 }
 
+
+/* Base global y fondo plano para evitar parpadeos mientras carga el canvas */
+body {
+    background-color: var(--color-cosmic-bg);
+    color: #e2e8f0;
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Filtro Neón para el emblema en Welcome */
+.neon-glow-filter {
+    filter: drop-shadow(0 0 6px rgba(0, 174, 255, 0.8)) 
+            drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));
+}
+
+/* Grilla responsive compartida */
 .game-layout-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -21,6 +53,13 @@
 
 @media (min-width: 768px) {
     .game-layout-grid {
+        grid-template-columns: repeat(2, minmax(320px, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+    .game-layout-grid {
         grid-template-columns: repeat(2, minmax(300px, 1fr));
     }
 }
+
