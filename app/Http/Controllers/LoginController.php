@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Usuari;
+use App\Models\Usuario;
 
 
 class LoginController extends Controller
@@ -24,7 +24,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $usuari = Usuari::where('name', $request-> input('name'))-> first();
+        $usuari = Usuario::where('name', $request-> input('name'))-> first();
 
         if($usuari && Hash::check($request-> input('password'), $usuari->password))
             {
@@ -44,15 +44,11 @@ class LoginController extends Controller
 
     public function register(Request $request)
     {
-        $user = Usuari::create([
+        $user = Usuario::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => 0, // 0 = Jugador, 1 = Admin
-            'juego1' => 0,
-            'juego2' => 0,
-            'juego3' => 0,
-            'juego4' => 0,
+            // role_id usa el valor por defecto de la tabla: 1 = jugador (2 = admin)
         ]);
 
         Auth::login($user);
