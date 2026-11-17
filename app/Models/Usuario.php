@@ -22,7 +22,7 @@ class Usuario extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $table = 'usuarios';
-    public $timestamps = false;
+
 
     protected $fillable = [
         'name',
@@ -86,5 +86,11 @@ class Usuario extends Authenticatable
     public function usuarioRecetas(): HasMany
     {
         return $this->hasMany(UsuarioReceta::class, 'id_usuario');
+    }
+    
+     //usuarrio M-- constelacion N
+    public function Constelaciones(): BelongsToMany
+    {
+        return $this->BelongsToMany(Constelaciones::class, 'constelaciones', 'id_constelacion', 'id_usuario');
     }
 }

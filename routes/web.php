@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Games\ControllerConstelaciones;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrbitaController;
@@ -20,6 +21,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/juegos/musica', [OrbitaController::class, 'index'])
         ->name('game.musica');
 
-    Route::post('/juegos/musica/guardar', [OrbitaController::class, 'guardarOrbitas'])
+Route::get('/games/musical', function () {
+    return view('games.musical.musica');
+})->name('game.musica');
+Route::post('/juegos/musica/guardar', [OrbitaController::class, 'guardarOrbitas'])
         ->name('orbitas.guardar');
+        
+Route::get('/games/constelacion',[ControllerConstelaciones::class, 'index']);
+
+
 });

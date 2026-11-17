@@ -28,4 +28,5 @@ class ElementoAlquimico extends Model
     {
         return $this->hasMany(Signo::class, 'id_elemento_alquimico');
     }
+        
 }
