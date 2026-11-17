@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\ElementoAlquimico;
+use App\Models\ElementoQuimico;
+use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

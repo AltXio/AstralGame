@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Juego;
+use App\Models\Nivel;
+use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

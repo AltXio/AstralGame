@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Nivel;
+use App\Models\Sesion;
+use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
