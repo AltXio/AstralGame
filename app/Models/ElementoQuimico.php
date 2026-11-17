@@ -2,9 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\ElementoAlquimico;
+use App\Models\PlanetaOrbita;
+use App\Models\Receta;
+use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Catálogo químico compartido por los cuatro juegos (incluye los metales sueltos).
@@ -42,5 +47,10 @@ class ElementoQuimico extends Model
             'id_elemento_quimico',
             'id_usuario'
         );
+    }
+
+    public function recetas(): HasMany
+    {
+        return $this->hasMany(Receta::class, 'id_elemento_quimico');
     }
 }
