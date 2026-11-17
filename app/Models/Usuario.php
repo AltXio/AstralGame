@@ -75,9 +75,16 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Sesion::class, 'id_usuario');
     }
+
     /** Orbitas para el juego 2 (musical) */
     public function partituraOrbitas()
     {
         return $this->hasMany(PartituraOrbita::class);
+    }
+
+    /** recetas para el juego 3 (cartas) */
+    public function usuarioRecetas(): HasMany
+    {
+        return $this->hasMany(UsuarioReceta::class, 'id_usuario');
     }
 }
