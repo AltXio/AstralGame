@@ -20,5 +20,5 @@ class ElementoAlquimico extends Model
     public function elementosQuimicos(): HasMany
     {
         return $this->hasMany(ElementoQuimico::class, 'id_elemento_alquimico');
-    }
+    }    
 }

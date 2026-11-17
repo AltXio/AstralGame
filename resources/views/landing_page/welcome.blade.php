@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
 
     <!-- Carga de Vite en Laravel -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js']);
 </head>
 <body class="relative min-h-screen flex flex-col justify-between text-slate-200 font-sans bg-slate-950 overflow-x-hidden">
 

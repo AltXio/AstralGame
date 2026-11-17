@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Games\ControllerConstelaciones;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 
@@ -20,6 +21,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/games/musical', function () {
     return view('games.musical.musica');
 })->name('game.musica');
+
+Route::get('/games/constelacion',[ControllerConstelaciones::class, 'index']);
 
 
 

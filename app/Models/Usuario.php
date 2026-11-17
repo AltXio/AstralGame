@@ -66,4 +66,9 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Sesion::class, 'id_usuario');
     }
+     //usuarrio M-- constelacion N
+    public function Constelaciones(): BelongsToMany
+    {
+        return $this->BelongsToMany(Constelaciones::class, 'constelaciones', 'id_constelacion', 'id_usuario');
+    }
 }

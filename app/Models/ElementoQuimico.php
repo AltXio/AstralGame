@@ -43,4 +43,10 @@ class ElementoQuimico extends Model
             'id_usuario'
         );
     }
+
+//CUERPOSCELESTES m-- elementoquimico N
+    public function CuerposCelestes(): BelongsToMany
+    {
+        return $this->BelongsToMany(CuerposCelestes::class, 'cuerpos_celestes', 'id_cuerpo_celeste','id_elemento_quimico');
+    }
 }
