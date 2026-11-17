@@ -12,6 +12,7 @@ export default defineConfig({
                 'resources/css/constelacion.css',
                 'resources/js/app.js',
                 'resources/js/astralquimium.js',
+                'resources/js/ocarina-game.js'
                 'resources/js/constelacionJuego.js'
             ],
             refresh: true,

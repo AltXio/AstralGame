@@ -2,6 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\ElementoQuimico;
+use App\Models\Juego;
+use App\Models\PlanetaCreado;
+use App\Models\Rol;
+use App\Models\Sesion;
+use App\Models\UsuarioReceta;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,9 +18,11 @@ use Illuminate\Notifications\Notifiable;
 /** Usuario del login (tabla usuarios). Sustituye a App\Models\User, que ya no se usa. */
 class Usuario extends Authenticatable
 {
-    use Notifiable;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
     protected $table = 'usuarios';
+    public $timestamps = false;
 
     protected $fillable = [
         'name',
@@ -66,6 +75,19 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Sesion::class, 'id_usuario');
     }
+
+    /** Orbitas para el juego 2 (musical) */
+    public function partituraOrbitas()
+    {
+        return $this->hasMany(PartituraOrbita::class);
+    }
+
+    /** recetas para el juego 3 (cartas) */
+    public function usuarioRecetas(): HasMany
+    {
+        return $this->hasMany(UsuarioReceta::class, 'id_usuario');
+    }
+    
      //usuarrio M-- constelacion N
     public function Constelaciones(): BelongsToMany
     {

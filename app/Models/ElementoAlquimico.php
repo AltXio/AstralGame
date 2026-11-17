@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\ElementoQuimico;
+use App\Models\Signo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -20,5 +22,11 @@ class ElementoAlquimico extends Model
     public function elementosQuimicos(): HasMany
     {
         return $this->hasMany(ElementoQuimico::class, 'id_elemento_alquimico');
-    }    
+    }
+
+    public function signos(): HasMany
+    {
+        return $this->hasMany(Signo::class, 'id_elemento_alquimico');
+    }
+        
 }
