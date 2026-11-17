@@ -66,4 +66,9 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Sesion::class, 'id_usuario');
     }
+    /** Orbitas para el juego 2 (musical) */
+    public function partituraOrbitas()
+    {
+        return $this->hasMany(PartituraOrbita::class);
+    }
 }

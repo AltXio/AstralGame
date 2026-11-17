@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/css/astralquimium.css',
                 'resources/js/app.js',
                 'resources/js/astralquimium.js',
+                'resources/js/ocarina-game.js'
             ],
             refresh: true,
         }),
