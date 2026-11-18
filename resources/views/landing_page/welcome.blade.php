@@ -168,9 +168,9 @@
             },
             'zodiaco': {
                 badge: 'Astrofísica Mística',
-                title: 'MODO ZODIACO & CONSTELACIONES',
-                desc: 'Posiciona los cuerpos celestes en los 12 signos del zodiaco para alinear las constelaciones[cite: 8].',
-                route: '{{ Route::has("game.zodiaco") ? route("game.zodiaco") : "#" }}'
+                title: 'Astral Recipe',
+                desc: 'Crea diferentes recetas combinando signos astrológicos, elementos quimicos y alquímicos.',
+                route: '{{ route("game.astral") }}'
             },
             'musica': {
                 badge: 'Harmonía Esferas',

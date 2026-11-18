@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const usandoPlanetasPrueba = planetasBD.length === 0;
     const planetasDisponibles = usandoPlanetasPrueba ? planetasPrototip : planetasBD;
    
-   function obtenerDominante(planeta) {
+    function obtenerDominante(planeta) {
         if (planeta.dominante) return planeta.dominante.toLowerCase();
         if (planeta.elemento_dominante && planeta.elemento_dominante.nombre) {
             return planeta.elemento_dominante.nombre.toLowerCase();
@@ -49,11 +49,33 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let audioCtx = null;
+    let delayNode = null;
+    let feedbackGain = null;
     let isPlaying = false;
 
     function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Eco digital ligero estilo N64 (cero carga de CPU)
+            delayNode = audioCtx.createDelay();
+            delayNode.delayTime.value = 0.18;
+
+            feedbackGain = audioCtx.createGain();
+            feedbackGain.gain.value = 0.25;
+
+            const wetFilter = audioCtx.createBiquadFilter();
+            wetFilter.type = 'lowpass';
+            wetFilter.frequency.value = 1200;
+
+            delayNode.connect(wetFilter);
+            wetFilter.connect(feedbackGain);
+            feedbackGain.connect(delayNode);
+            wetFilter.connect(audioCtx.destination);
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
     }
 
     function getAcordOcarinaPlaneta(planeta) {
@@ -66,35 +88,68 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (dominante === 'tierra') { baseFreq = OCARINA_NOTES['A']; noteName = 'A (Fa4)'; }
         else if (dominante === 'aire') { baseFreq = OCARINA_NOTES['C-Left']; noteName = 'C-Left (La4)'; }
 
-        const isMinor = planeta.habitabilidad === false || planeta.habitabilidad === 0;
-        const multiplier2 = isMinor ? 1.2 : 1.25;
-        const multiplier3 = 1.5;
-
         return {
             noteLabel: noteName,
-            freqs: [baseFreq, baseFreq * multiplier2, baseFreq * multiplier3]
+            freqs: [baseFreq] // Nota pura monofónica estilo N64
         };
     }
 
-    function tocarOcarinaSound(freqsArray, durada = 1.2) {
+    // Sonido fiel de Ocarina N64 (ligero, limpio y sin lag)
+    function tocarOcarinaSound(freqsArray, durada = 0.65) {
         initAudio();
-        freqsArray.forEach(freq => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+        const now = audioCtx.currentTime;
+        const freq = Array.isArray(freqsArray) ? freqsArray[0] : freqsArray;
 
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        // 1. Oscilador principal (Onda senoidal pura)
+        const oscMain = audioCtx.createOscillator();
+        oscMain.type = 'sine';
+        oscMain.frequency.setValueAtTime(freq * 0.985, now);
+        oscMain.frequency.exponentialRampToValueAtTime(freq, now + 0.035);
 
-            gain.gain.setValueAtTime(0, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.08);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + durada);
+        // 2. Cuerpo sutil de cerámica/barro
+        const oscBody = audioCtx.createOscillator();
+        oscBody.type = 'triangle';
+        oscBody.frequency.setValueAtTime(freq, now);
 
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+        const bodyGain = audioCtx.createGain();
+        bodyGain.gain.setValueAtTime(0.04, now);
 
-            osc.start();
-            osc.stop(audioCtx.currentTime + durada);
-        });
+        // 3. Vibrato característico de Link (5.5 Hz tras 0.18s)
+        const vibrato = audioCtx.createOscillator();
+        const vibratoGain = audioCtx.createGain();
+        vibrato.frequency.setValueAtTime(5.5, now);
+
+        vibratoGain.gain.setValueAtTime(0, now);
+        vibratoGain.gain.linearRampToValueAtTime(0, now + 0.18);
+        vibratoGain.gain.linearRampToValueAtTime(freq * 0.01, now + 0.35);
+
+        vibrato.connect(vibratoGain);
+        vibratoGain.connect(oscMain.frequency);
+        vibratoGain.connect(oscBody.frequency);
+
+        // 4. Envolvente limpia
+        const mainGain = audioCtx.createGain();
+        mainGain.gain.setValueAtTime(0.0001, now);
+        mainGain.gain.linearRampToValueAtTime(0.28, now + 0.04);
+        mainGain.gain.setValueAtTime(0.24, now + durada - 0.12);
+        mainGain.gain.exponentialRampToValueAtTime(0.0001, now + durada);
+
+        // 5. Conexiones
+        oscMain.connect(mainGain);
+        oscBody.connect(bodyGain);
+        bodyGain.connect(mainGain);
+
+        mainGain.connect(audioCtx.destination);
+        mainGain.connect(delayNode);
+
+        // 6. Ejecución
+        oscMain.start(now);
+        oscBody.start(now);
+        vibrato.start(now);
+
+        oscMain.stop(now + durada);
+        oscBody.stop(now + durada);
+        vibrato.stop(now + durada);
     }
 
     // Estado del sistema solar DOM
@@ -108,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function cargarOrbitasIniciales() {
         if (!orbitasGuardadas.length) return;
 
-        // Ajustar el número de anillos si hay planetas guardados en órbitas superiores a 3
         const maxOrbitaBD = Math.max(...orbitasGuardadas.map(o => o.numero_orbita));
         if (maxOrbitaBD > currentOrbitCount) {
             currentOrbitCount = Math.min(maxOrbits, maxOrbitaBD);
@@ -177,7 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             planetEl.innerHTML = `<span class="placed-planet-label">${item.planeta.nombre}</span>`;
 
-            // Permitir quitar un planeta concreto con doble clic
             planetEl.addEventListener('dblclick', () => {
                 placedPlanets = placedPlanets.filter(p => p.instanceId !== item.instanceId);
                 renderPlacedPlanets();
@@ -266,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Drag & Drop (Permite varios planetas en la misma órbita)
+    // Drag & Drop
     solarSystem.addEventListener('dragover', (e) => e.preventDefault());
 
     solarSystem.addEventListener('drop', (e) => {
@@ -309,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderPlacedPlanets();
         const ocarinaData = getAcordOcarinaPlaneta(planeta);
-        tocarOcarinaSound(ocarinaData.freqs);
+        tocarOcarinaSound(ocarinaData.freqs, 0.65);
     });
 
     // Botón Sol (Play / Pausa)
@@ -335,9 +388,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     if (isPlaying) {
                         const data = getAcordOcarinaPlaneta(item.planeta);
-                        tocarOcarinaSound(data.freqs, 1.4);
+                        tocarOcarinaSound(data.freqs, 0.65);
                     }
-                }, index * 700);
+                }, index * 650);
             });
         } else {
             playIcon.textContent = '▶';
@@ -379,12 +432,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="text-[10px] font-semibold text-[#6f9bff]">Nota: ${ocarinaData.noteLabel}</div>
                 </div>
-                <button class="btn-play-card w-6 h-6 rounded-full bg-[#6f9bff] text-[#070a22] flex items-center justify-center text-[10px] font-bold hover:bg-white transition-colors cursor-pointer" type="button" title="Escuchar acorde">▶</button>
+                <button class="btn-play-card w-6 h-6 rounded-full bg-[#6f9bff] text-[#070a22] flex items-center justify-center text-[10px] font-bold hover:bg-white transition-colors cursor-pointer" type="button" title="Escuchar nota">▶</button>
             `;
 
             card.querySelector('.btn-play-card').addEventListener('click', (e) => {
                 e.stopPropagation();
-                tocarOcarinaSound(ocarinaData.freqs);
+                tocarOcarinaSound(ocarinaData.freqs, 0.65);
             });
 
             card.addEventListener('dragstart', (e) => {
