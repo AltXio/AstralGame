@@ -40,15 +40,7 @@ body {
     background: transparent !important;
 }
 
-header {
-    height: 58px;
-    padding: 0 4vw;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #30385e;
-    margin-top: 10px
-}
+
 
 .logo {
     font-size: 24px
@@ -152,7 +144,7 @@ button:disabled {
 }
 
 .panel {
-    background: #07011a ;
+
     border: 2px solid #cbced8;
     border-radius: 14px;
     padding: 16px;
@@ -180,7 +172,7 @@ h3 {
     height: 460px;
     margin-top: 10px;
     border-radius: 12px;
-    background: radial-gradient(ellipse at center, #29335f55, transparent 65%), #090f2d99;
+   
     overflow: hidden
 }
 
@@ -273,29 +265,27 @@ h3 {
     color: #f0dca0
 }
 
-/* .clue {
-    padding: 11px;
-    border-left: 2px solid var(--violet);
-    background: #8073b51a;
-    border-radius: 0 8px 8px 0;
-    font: 12px/1.6 Arial;
-    margin: 10px 0
-} */
-
 .pieces {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px
+    gap: 8px;
+    align-items: stretch;
 }
 
-.pieces {
-    align-items: start
+.prow-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .prow {
     display: flex;
-    gap: 8px;
-    align-items: center
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
 }
 
 .more {
@@ -307,30 +297,52 @@ h3 {
 }
 
 .piece {
-    display: block;
-    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 8px;
     border: 1px solid #3a456e;
     border-radius: 10px;
     background: #0b1436;
     cursor: grab;
     min-width: 0;
-    user-select: none
+    user-select: none;
+    text-align: center;
 }
 
-.piece.sel {
-    border-color: var(--gold);
-    box-shadow: 0 0 12px #d8c58b44
+.piece .small {
+    text-align: center;
 }
 
-.piece.used {
-    opacity: .28;
-    pointer-events: none
+.piece .small h3 {
+    margin: 0 0 6px;
+    text-align: center;
 }
+
+.piece .small svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.piece .info-extra {
+    text-align: start;
+    margin-top: 8px;
+}
+
 .div_element {
-    display:flex   ;
-    margin:  20px 0
-    
-}.triangulos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+ .triangulos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
     text-align: center;
 }
 

@@ -31,4 +31,10 @@ class Nivel extends Model
     {
         return $this->hasMany(UsuarioReceta::class, 'id_nivel');
     }
+
+
+    public function Constelaciones(): BelongsTo
+    {
+        return $this->belongsTo(Constelaciones::class, 'id_nivel');
+    }
 }

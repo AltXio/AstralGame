@@ -24,10 +24,9 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/games/musical', function () {
     return view('games.musical.musica');
 })->name('game.musica');
+
 Route::post('/juegos/musica/guardar', [OrbitaController::class, 'guardarOrbitas'])
         ->name('orbitas.guardar');
         
-Route::get('/games/constelacion',[ControllerConstelaciones::class, 'index']);
-
-
+Route::get('/games/constelacion',[ControllerConstelaciones::class, 'index']) ->name('game.constelaciones');;
 });

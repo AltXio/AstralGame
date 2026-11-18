@@ -119,7 +119,7 @@
                         <img src="{{ asset('images/nodo-alquimia-bg-r.png') }}" alt="Elemento" onerror="this.style.display='none'" class="w-full h-full object-contain">
                         <span class="absolute text-emerald-300 font-bold text-[10px] pointer-events-none">ELEM</span>
                     </div>
-                    <button onclick="mostrarJuego(event, 'elemento')" 
+                    <button onclick="mostrarJuego(event, 'constelacion')" 
                             class="absolute inset-0 rounded-full opacity-0 hover:opacity-100 border-2 border-emerald-300 bg-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.9)] transition-all duration-300 cursor-pointer z-20"
                             title="Modo Elemento Inferior">
                     </button>
@@ -178,11 +178,11 @@
                 desc: 'El sistema solar funciona como una partitura circular interactiva basada en frecuencias armónicas[cite: 8].',
                 route: '{{ route("game.musica") }}'
             },
-            'elemento': {
+            'constelacion': {
                 badge: 'Desafío Final',
                 title: 'MODO QUINTO ELEMENTO',
                 desc: 'Equilibra las cargas energéticas del círculo alquímico antes de que la materia se desestabilice por completo[cite: 8].',
-                route: '{{ Route::has("game.elemento") ? route("game.elemento") : "#" }}'
+                route: '{{ route("game.constelaciones") }}'
             }
         };
 
