@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Games\AstralRecipeController;
 use App\Http\Controllers\Games\ControllerConstelaciones;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -18,16 +19,19 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Rutas protegidas (requieren sesión iniciada)
 Route::middleware(['auth'])->group(function () {
+    // Orbital Music
     Route::get('/juegos/musica', [OrbitaController::class, 'index'])
         ->name('game.musica');
 
-Route::get('/games/musical', function () {
-    return view('games.musical.musica');
-})->name('game.musica');
-Route::post('/juegos/musica/guardar', [OrbitaController::class, 'guardarOrbitas'])
+    Route::get('/games/musical', function () {
+        return view('games.musical.musica');
+    })->name('game.musica');
+    Route::post('/juegos/musica/guardar', [OrbitaController::class, 'guardarOrbitas'])
         ->name('orbitas.guardar');
-        
-Route::get('/games/constelacion',[ControllerConstelaciones::class, 'index']);
 
+    // Astral Recipe
+    Route::get('/games/astral', [AstralRecipeController::class, 'index'])->name('game.astral');
 
+    // Consetalciones
+    Route::get('/games/constelacion', [ControllerConstelaciones::class, 'index']);
 });
