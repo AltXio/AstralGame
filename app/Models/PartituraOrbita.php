@@ -9,16 +9,19 @@ class PartituraOrbita extends Model
 {
     protected $table = 'partitura_orbitas';
 
+    // la tabla no tiene created_at / updated_at
+    public $timestamps = false;
+
     protected $fillable = [
         'user_id',
-        'id_planeta_orbita',
+        'id_planeta_creado',
         'numero_orbita',
         'angulo',
     ];
 
     public function planeta(): BelongsTo
     {
-        return $this->belongsTo(PlanetaOrbita::class, 'id_planeta_orbita');
+        return $this->belongsTo(PlanetaCreado::class, 'id_planeta_creado');
     }
 
     public function user(): BelongsTo

@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
        // $middleware -> redirectGuestsTo('/login');
+        $middleware->alias(['juego' => \App\Http\Middleware\JuegoDesbloqueado::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

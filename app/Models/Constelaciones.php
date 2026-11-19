@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -27,8 +28,8 @@ class Constelaciones extends Model
     }
 
 
-      public function Nivel(): HasMany
+    public function Nivel(): BelongsTo
     {
-        return $this->hasMany(Nivel::class, 'id_nivel');
+        return $this->belongsTo(Nivel::class, 'id_nivel');
     }
 }
