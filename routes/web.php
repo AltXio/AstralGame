@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Games\AstralRecipeController;
 use App\Http\Controllers\Games\ControllerConstelaciones;
+use App\Http\Controllers\Games\ControllerInventario;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrbitaController;
@@ -33,5 +34,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/games/astral', [AstralRecipeController::class, 'index'])->name('game.astral');
 
     // Consetalciones
-    Route::get('/games/constelacion', [ControllerConstelaciones::class, 'index']);
+    Route::get('/games/constelacion', [ControllerConstelaciones::class, 'index'])->name('game.constelaciones');
+    Route::get('/games/constelacion/inventario', [ControllerInventario::class, 'index']);
 });

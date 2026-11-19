@@ -11,6 +11,24 @@
     margin-top: 10px ;
     margin-bottom: 20px ;
 }
+
+
+.header {
+    display: flex;
+    justify-content: space-between; /* Pon "flex-start" con "gap: 20px" si prefieres los botones pegados al título */
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.header h2 {
+    margin: 0;
+}
+
+.header .tabs {
+    margin-bottom: 0;
+}
+
 :root {
     --ink: #eeeafa;
     --muted: #aab3d4;
