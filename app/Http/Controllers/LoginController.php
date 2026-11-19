@@ -22,8 +22,12 @@ class LoginController extends Controller
 
     }
 
-    public function login(Request $request)
-    {
+    public function login(Request $request) {
+    //     $usu = Usuario::find(1);
+    //     $usu->password = Hash::make('123456');
+    //     $usu->save();
+
+
         $usuari = Usuario::where('name', $request-> input('name'))-> first();
 
         if($usuari && Hash::check($request-> input('password'), $usuari->password))

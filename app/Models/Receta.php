@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\ElementoQuimico;
 use App\Models\Signo;
-use App\Models\UsuarioReceta;
+use App\Models\UsuariosReceta;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,6 +28,6 @@ class Receta extends Model
 
     public function usuarioRecetas(): HasMany
     {
-        return $this->hasMany(UsuarioReceta::class, 'id_receta');
+        return $this->hasMany(UsuariosReceta::class, 'id_receta');
     }
 }
