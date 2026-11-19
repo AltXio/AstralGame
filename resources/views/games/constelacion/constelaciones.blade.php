@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @vite(['resources/css/constelacion.css', 'resources/js/constelacionJuego.js','resources/css/app.css','resources/js/app.js'])
+    @vite(['resources/css/constelacion.css', 'resources/js/constelacionJuego.js', 'resources/css/app.css', 'resources/js/app.js'])
     <title>Constelaciones</title>
 </head>
 
@@ -20,15 +20,17 @@
         <canvas id="cosmic-bg-canvas" class="fixed inset-0 -z-10 w-full h-full pointer-events-none"></canvas>
 
 
-        <div class="header">
-            <h2>Constelaciones</h2>
 
-            <div class="tabs"><button class="on" id="jugar">Jugar</button>
-                <button id="inventario"> Inventario</button>
-            </div>
-        </div>
-        
+
         <main>
+            <div class="header">
+                <h2>Constelaciones</h2>
+
+                <div class="tabs">
+                    <button class="on" id="jugar">Jugar</button>
+                    <button id="inventario">Inventario</button>
+                </div>
+            </div>
             <div class="top">
                 <div class="small">
                     <h2 id="title"></h2>

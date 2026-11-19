@@ -556,7 +556,11 @@ function iniciarJuego() {
     };
 
     document.getElementById("inventario").onclick = function () {
-        window.location.href = "/inventario";
+        window.location.href = "/games/constelacion/inventario";
+    };
+
+    document.getElementById("jugar").onclick = function () {
+        window.location.href = "/games/constelacion";
     };
 
     mostrarElementosAlquimicos(elemtosAlquimicos);

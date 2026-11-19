@@ -12,7 +12,7 @@ class ControllerInventario extends Controller
      */
     public function index()
     {
-        return view("games.constelacionesInventario");
+        return view("games.constelacion.constelacionesInventario");
     }
 
     /**
