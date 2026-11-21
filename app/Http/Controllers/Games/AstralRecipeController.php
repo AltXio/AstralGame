@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Games;
 
 use App\Http\Controllers\Controller;
+use App\Models\ElementoQuimico;
+use App\Models\Nivel;
+use App\Models\Signo;
 use Illuminate\Http\Request;
 
 class AstralRecipeController extends Controller
@@ -12,7 +15,34 @@ class AstralRecipeController extends Controller
      */
     public function index()
     {
-        return view("games.astral_recipe.astral");
+        $niveles = Nivel::where('id_juego', 3)->get();
+        $signos = Signo::with('elementoAlquimico')->get();
+
+        // planeta regente => [símbolo, nombre del metal en elementos_quimicos]
+        $planetas = [
+            'Marte' => ['♂', 'Hierro'],
+            'Sol' => ['☉', 'Oro'],
+            'Luna' => ['☽', 'Plata'],
+            'Venus'=> ['♀', 'Cobre'],
+            'Mercurio' => ['☿', 'Mercurio'],
+            'Júpiter' => ['♃', 'Estaño'],
+            'Saturno' => ['♄', 'Plomo'],
+        ];
+
+        // Consulta con todos los metales, indexados por nombre
+        $metales = ElementoQuimico::whereIn('nombre', array_column($planetas, 1))
+            ->get()
+            ->keyBy('nombre');
+
+        foreach ($signos as $signo) {
+            [$simbolo, $nombreMetal] = $planetas[$signo->planeta_regente] ?? [null, null];
+
+            $signo->metal = $nombreMetal
+                ? "{$simbolo} {$nombreMetal} / {$signo->planeta_regente}"
+                : '';
+        }
+
+        return view('games.astral_recipe.astral', compact('niveles', 'signos'));
     }
 
     /**
@@ -34,7 +64,7 @@ class AstralRecipeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
         //
     }
