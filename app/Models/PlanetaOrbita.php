@@ -15,7 +15,7 @@ class PlanetaOrbita extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['user_id', 'nombre', 'descripcion'];
+    protected $fillable = ['id', 'nombre', 'descripcion'];
 
     /** Los 4 elementos químicos más abundantes del planeta (sin orden). */
     public function elementosQuimicos(): BelongsToMany

@@ -12,7 +12,7 @@ class ControllerConstelaciones extends Controller
      */
     public function index()
     {
-        return view("games.constelaciones");
+        return view("games.constelacion.constelaciones");
     }
 
     /**
