@@ -13,7 +13,9 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/astralquimium.js',
                 'resources/js/ocarina-game.js',
-                'resources/js/constelacionJuego.js'
+                'resources/js/constelacionJuego.js',
+                'resources/css/astral_recipe.css', 
+                'resources/js/astral_recipe.js'
             ],
             refresh: true,
         }),
