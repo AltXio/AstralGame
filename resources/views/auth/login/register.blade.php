@@ -24,7 +24,7 @@
                 <h2 class="text-2xl sm:text-3xl font-display text-[#d3dbea] tracking-wider mb-1">
                     REGISTRO DE INICIADO
                 </h2>
-                <p class="text-xs text-[#93a0bd]">Crea tu perfil para comenzar a desbloquear constelaciones</p>
+                <p class="text-xs text-[#93a0bd]">Crea tu perfil para comenzar a desbloquear el conocimiento del universo</p>
             </div>
 
             @if ($errors->any())

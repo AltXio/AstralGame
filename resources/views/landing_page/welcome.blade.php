@@ -80,7 +80,6 @@
                         class="w-full h-full rounded-full bg-slate-900 border-2 border-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.8)] flex items-center justify-center overflow-hidden relative">
                         <img src="{{ asset('images/nodo-central-bg-r.png') }}" alt="Centro"
                             onerror="this.style.display='none'" class="w-full h-full object-contain">
-                        <span class="absolute text-blue-300 font-bold text-[10px] pointer-events-none">CENTRO</span>
                     </div>
                     <button onclick="mostrarJuego(event, 'centro')"
                         class="absolute inset-0 rounded-full opacity-0 hover:opacity-100 border-2 border-blue-300 bg-blue-400/20 shadow-[0_0_25px_rgba(147,197,253,0.9)] transition-all duration-300 cursor-pointer z-20"
@@ -95,7 +94,6 @@
                         class="w-full h-full rounded-full bg-slate-900 border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.7)] flex items-center justify-center overflow-hidden relative">
                         <img src="{{ asset('images/nodo-alquimia-bg-r.png') }}" alt="Alquimia"
                             onerror="this.style.display='none'" class="w-full h-full object-contain">
-                        <span class="absolute text-amber-300 font-bold text-[10px] pointer-events-none">ALQ</span>
                     </div>
                     <button onclick="mostrarJuego(event, 'alquimia')"
                         class="absolute inset-0 rounded-full opacity-0 hover:opacity-100 border-2 border-amber-300 bg-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.9)] transition-all duration-300 cursor-pointer z-20"
@@ -110,7 +108,6 @@
                         class="w-full h-full rounded-full bg-slate-900 border-2 border-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.7)] flex items-center justify-center overflow-hidden relative">
                         <img src="{{ asset('images/nodo-zodiaco-bg-r.png') }}" alt="Zodiaco"
                             onerror="this.style.display='none'" class="w-full h-full object-contain">
-                        <span class="absolute text-purple-300 font-bold text-[10px] pointer-events-none">ZOD</span>
                     </div>
                     <button onclick="mostrarJuego(event, 'zodiaco')"
                         class="absolute inset-0 rounded-full opacity-0 hover:opacity-100 border-2 border-purple-300 bg-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.9)] transition-all duration-300 cursor-pointer z-20"
@@ -125,7 +122,6 @@
                         class="w-full h-full rounded-full bg-slate-900 border-2 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.7)] flex items-center justify-center overflow-hidden relative">
                         <img src="{{ asset('images/nodo-musical-bg-r.png') }}" alt="Música"
                             onerror="this.style.display='none'" class="w-full h-full object-contain">
-                        <span class="absolute text-cyan-300 font-bold text-[10px] pointer-events-none">MUS</span>
                     </div>
                     <button onclick="mostrarJuego(event, 'musica')"
                         class="absolute inset-0 rounded-full opacity-0 hover:opacity-100 border-2 border-cyan-300 bg-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.9)] transition-all duration-300 cursor-pointer z-20"
@@ -176,9 +172,9 @@
     <script>
         const juegos = {
             'centro': {
-                badge: 'Modo Principal',
-                title: 'NÚCLEO DE TRANSMUTACIÓN',
-                desc: 'El centro neurálgico donde convergen todas las fuerzas elementales[cite: 8].',
+                badge: 'Modo Admin',
+                title: 'NÚCLEO DE GESTIÓN',
+                desc: 'El centro neurálgico donde convergen todas las fuerzas elementales.',
                 route: '#'
             },
             'alquimia': {
@@ -195,16 +191,16 @@
                 locked: @json($bloqueado[3])
             },
             'musica': {
-                badge: 'Harmonía Esferas',
-                title: 'MODO PARTITURA & MELODÍA',
-                desc: 'El sistema solar funciona como una partitura circular interactiva basada en frecuencias armónicas[cite: 8].',
+                badge: 'Armonía Espacial',
+                title: 'Orbital Music',
+                desc: 'Ubica los planetas en sus orbitas y descubre sus frecuencias armónicas.',
                 route: '{{ route("game.musica") }}',
                 locked: @json($bloqueado[2])
             },
             'constelacion': {
-                badge: 'Desafío Final',
-                title: 'MODO QUINTO ELEMENTO',
-                desc: 'Equilibra las cargas energéticas del círculo alquímico antes de que la materia se desestabilice por completo[cite: 8].',
+                badge: 'Espíritus del Cosmos',
+                title: 'Constelaciones',
+                desc: 'Descubre las conexiones místicas entre los astros y sus energías.',
                 route: '{{ route("game.constelaciones") }}',
                 locked: @json($bloqueado[4])
             }

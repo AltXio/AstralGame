@@ -25,7 +25,11 @@ class ProgresoJuegos
             return true;
         }
 
-        return $user->juegos()->where('juegos.id', $idJuego)->exists();
+        // Terminar el juego 1 abre todos los demás (también para quien ya lo había terminado antes)
+        return $user->juegos()
+            ->where(fn ($q) => $q->where('juegos.id', $idJuego)
+                ->orWhere(fn ($q2) => $q2->where('juegos.id', config('astralquimium.id_juego'))->whereNotNull('usuarios_juegos.fecha_completado')))
+            ->exists();
     }
 
     /** @return array<int,bool>  id_juego => desbloqueado, para los 4 juegos */
