@@ -8,8 +8,8 @@
 return [
     // Reglas del laboratorio
     'max_partes' => 12,
-    'umbral_desbloqueo' => 3,          // planetas creados para desbloquear los juegos 2 y 3
-    'juegos_desbloqueados' => [2, 3],  // ids de la tabla juegos
+    'umbral_desbloqueo' => 4,          // planetas creados para terminar el juego 1 y desbloquear los demás
+    'juegos_desbloqueados' => [2, 3, 4],  // ids de la tabla juegos: al terminar el juego 1 se abren todos
     'id_juego' => 1,
     'inactividad_segundos' => 600,     // 10 minutos sin actividad cierran la sesión
 
