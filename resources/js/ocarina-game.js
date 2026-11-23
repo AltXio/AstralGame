@@ -6,10 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Datos inyectados desde Laravel (BD)
     const {
         planetasDisponibles: planetasBD = [],
-        orbitasGuardadas = [],
+        melodiasGuardadas: melodiasIniciales = [],
         saveUrl = '',
         csrfToken = ''
     } = window.OCARINA_DATA || {};
+
+    let melodiasBD = [...melodiasIniciales];
+    let melodiaActivaId = null;
 
     // 4 planetas de prueba para usuarios sin planetas creados aún en la BD
     const planetasPrototip = [
@@ -57,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             
-            // Eco digital ligero estilo N64 (cero carga de CPU)
             delayNode = audioCtx.createDelay();
             delayNode.delayTime.value = 0.18;
 
@@ -90,23 +92,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return {
             noteLabel: noteName,
-            freqs: [baseFreq] // Nota pura monofónica estilo N64
+            freqs: [baseFreq]
         };
     }
 
-    // Sonido fiel de Ocarina N64 (ligero, limpio y sin lag)
     function tocarOcarinaSound(freqsArray, durada = 0.65) {
         initAudio();
         const now = audioCtx.currentTime;
         const freq = Array.isArray(freqsArray) ? freqsArray[0] : freqsArray;
 
-        // 1. Oscilador principal (Onda senoidal pura)
         const oscMain = audioCtx.createOscillator();
         oscMain.type = 'sine';
         oscMain.frequency.setValueAtTime(freq * 0.985, now);
         oscMain.frequency.exponentialRampToValueAtTime(freq, now + 0.035);
 
-        // 2. Cuerpo sutil de cerámica/barro
         const oscBody = audioCtx.createOscillator();
         oscBody.type = 'triangle';
         oscBody.frequency.setValueAtTime(freq, now);
@@ -114,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const bodyGain = audioCtx.createGain();
         bodyGain.gain.setValueAtTime(0.04, now);
 
-        // 3. Vibrato característico de Link (5.5 Hz tras 0.18s)
         const vibrato = audioCtx.createOscillator();
         const vibratoGain = audioCtx.createGain();
         vibrato.frequency.setValueAtTime(5.5, now);
@@ -127,14 +125,12 @@ document.addEventListener('DOMContentLoaded', () => {
         vibratoGain.connect(oscMain.frequency);
         vibratoGain.connect(oscBody.frequency);
 
-        // 4. Envolvente limpia
         const mainGain = audioCtx.createGain();
         mainGain.gain.setValueAtTime(0.0001, now);
         mainGain.gain.linearRampToValueAtTime(0.28, now + 0.04);
         mainGain.gain.setValueAtTime(0.24, now + durada - 0.12);
         mainGain.gain.exponentialRampToValueAtTime(0.0001, now + durada);
 
-        // 5. Conexiones
         oscMain.connect(mainGain);
         oscBody.connect(bodyGain);
         bodyGain.connect(mainGain);
@@ -142,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mainGain.connect(audioCtx.destination);
         mainGain.connect(delayNode);
 
-        // 6. Ejecución
         oscMain.start(now);
         oscBody.start(now);
         vibrato.start(now);
@@ -159,25 +154,36 @@ document.addEventListener('DOMContentLoaded', () => {
     let placedPlanets = [];
     let instanceCounter = 0;
 
-    // 2. Cargar órbitas iniciales desde la Base de Datos
-    function cargarOrbitasIniciales() {
-        if (!orbitasGuardadas.length) return;
+    // 2. Cargar una melodía concreta en el sistema solar
+    function cargarMelodia(melodia) {
+        if (!melodia) return;
 
-        const maxOrbitaBD = Math.max(...orbitasGuardadas.map(o => o.numero_orbita));
-        if (maxOrbitaBD > currentOrbitCount) {
-            currentOrbitCount = Math.min(maxOrbits, maxOrbitaBD);
+        melodiaActivaId = melodia.id;
+        const nameInput = document.getElementById('melodyNameInput');
+        if (nameInput) nameInput.value = melodia.nombre;
+
+        const orbitas = melodia.orbitas || [];
+        if (orbitas.length > 0) {
+            const maxOrbitaBD = Math.max(...orbitas.map(o => o.numero_orbita));
+            currentOrbitCount = Math.min(maxOrbits, Math.max(3, maxOrbitaBD));
         }
 
-        placedPlanets = orbitasGuardadas.map(registro => {
-            const orbitIndex = registro.numero_orbita - 1;
-            return {
-                instanceId: ++instanceCounter,
-                orbitIndex: orbitIndex,
-                angle: parseFloat(registro.angulo) || 0,
-                speed: 0.018 / (orbitIndex + 1),
-                planeta: registro.planeta
-            };
-        });
+        placedPlanets = orbitas
+            .filter(registro => registro.planeta)
+            .map(registro => {
+                const orbitIndex = registro.numero_orbita - 1;
+                return {
+                    instanceId: ++instanceCounter,
+                    orbitIndex: orbitIndex,
+                    angle: parseFloat(registro.angulo) || 0,
+                    speed: 0.018 / (orbitIndex + 1),
+                    planeta: registro.planeta
+                };
+            });
+
+        updateOrbitRings();
+        renderPlacedPlanets();
+        renderMelodySidebar();
     }
 
     function updateOrbitRings() {
@@ -273,10 +279,37 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPlacedPlanets();
     });
 
-    // 3. Guardar en Base de Datos al pulsar el botón "Guardar"
+    // Botón "+ Nueva" en el panel lateral derecho
+    document.getElementById('btnNewMelody')?.addEventListener('click', () => {
+        melodiaActivaId = null;
+        placedPlanets = [];
+        const nameInput = document.getElementById('melodyNameInput');
+        if (nameInput) {
+            nameInput.value = '';
+            nameInput.focus();
+        }
+        renderPlacedPlanets();
+        renderMelodySidebar();
+    });
+
+    // 3. Guardar o actualizar melodía en la Base de Datos
     document.getElementById('btnSaveSystem')?.addEventListener('click', async () => {
         if (usandoPlanetasPrueba) {
-            alert('Estás usando planetas de prueba. Crea tus propios planetas en el laboratorio (Juego 1) para poder guardar tus órbitas.');
+            alert('Estás usando planetas de prueba. Crea tus propios planetas en el laboratorio (Juego 1) para poder guardar tus melodías.');
+            return;
+        }
+
+        const nameInput = document.getElementById('melodyNameInput');
+        const nombreMelodia = nameInput?.value.trim() || '';
+
+        if (!nombreMelodia) {
+            alert('Escribe un nombre para tu melodía antes de guardar.');
+            nameInput?.focus();
+            return;
+        }
+
+        if (placedPlanets.length === 0) {
+            alert('Coloca al menos un planeta en una órbita antes de guardar la melodía.');
             return;
         }
 
@@ -285,11 +318,15 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'Guardando...';
         btn.disabled = true;
 
-        const payload = placedPlanets.map(item => ({
-            id_planeta_creado: item.planeta.id,
-            numero_orbita: item.orbitIndex + 1,
-            angulo: item.angle
-        }));
+        const payload = {
+            id_melodia: melodiaActivaId,
+            nombre_melodia: nombreMelodia,
+            orbitas: placedPlanets.map(item => ({
+                id_planeta_creado: item.planeta.id,
+                numero_orbita: item.orbitIndex + 1,
+                angulo: item.angle
+            }))
+        };
 
         try {
             const response = await fetch(saveUrl, {
@@ -299,11 +336,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': csrfToken
                 },
-                body: JSON.stringify({ orbitas: payload })
+                body: JSON.stringify(payload)
             });
 
             const data = await response.json();
-            if (response.ok) {
+            if (response.ok && data.melodia) {
+                melodiaActivaId = data.melodia.id;
+
+                const idx = melodiasBD.findIndex(m => m.id === data.melodia.id);
+                if (idx >= 0) {
+                    melodiasBD[idx] = data.melodia;
+                } else {
+                    melodiasBD.unshift(data.melodia);
+                }
+
+                renderMelodySidebar();
                 btn.textContent = '¡Guardado!';
                 setTimeout(() => { btn.textContent = originalText; }, 1500);
             } else {
@@ -399,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Renderizar barra lateral con los planetas del usuario desde la BD
+    // Renderizar barra lateral izquierda con los planetas del usuario desde la BD
     function renderSidebar() {
         const listContainer = document.getElementById('planet-list');
         if (!listContainer) return;
@@ -448,10 +495,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Inicialización
-    cargarOrbitasIniciales();
-    updateOrbitRings();
-    renderPlacedPlanets();
+    // Renderizar barra lateral derecha con las melodías guardadas (ID + Nombre)
+    function renderMelodySidebar() {
+        const melodyList = document.getElementById('melody-list');
+        if (!melodyList) return;
+
+        melodyList.innerHTML = '';
+
+        if (melodiasBD.length === 0) {
+            melodyList.innerHTML = `<p class="text-xs text-[#93a0bd] italic">No tienes melodías guardadas aún.</p>`;
+            return;
+        }
+
+        melodiasBD.forEach(melodia => {
+            const isSelected = melodia.id === melodiaActivaId;
+            const totalPlanetas = melodia.orbitas ? melodia.orbitas.length : 0;
+
+            const card = document.createElement('div');
+            card.className = `ocarina-planet-card flex items-center justify-between gap-2 !cursor-pointer ${isSelected ? '!border-[#8fcf8a] !bg-[#8fcf8a]/10' : ''}`;
+            card.title = 'Haz clic para cargar esta melodía en el sistema solar';
+
+            card.innerHTML = `
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-1.5 mb-0.5">
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#6f9bff]/20 text-[#6f9bff] border border-[#6f9bff]/40">
+                            #${melodia.id}
+                        </span>
+                        <strong class="font-display text-[#d3dbea] text-xs sm:text-sm truncate">${melodia.nombre}</strong>
+                    </div>
+                    <div class="text-[10px] text-[#93a0bd]">${totalPlanetas} planeta(s) en órbita</div>
+                </div>
+                <button class="w-6 h-6 rounded-full bg-[#8fcf8a] text-[#070a22] flex items-center justify-center text-[10px] font-bold hover:bg-white transition-colors cursor-pointer shrink-0" type="button" title="Cargar melodía">
+                    ▶
+                </button>
+            `;
+
+            card.addEventListener('click', () => {
+                cargarMelodia(melodia);
+            });
+
+            melodyList.appendChild(card);
+        });
+    }
+
+    // Inicialización: si tiene melodías guardadas, carga la más reciente por defecto
+    if (melodiasBD.length > 0) {
+        cargarMelodia(melodiasBD[0]);
+    } else {
+        updateOrbitRings();
+        renderPlacedPlanets();
+        renderMelodySidebar();
+    }
+
     renderSidebar();
     requestAnimationFrame(updateAnimation);
 
