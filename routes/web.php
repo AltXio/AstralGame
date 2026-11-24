@@ -60,6 +60,6 @@ Route::middleware(['auth'])->group(function () {
     // Constelaciones (juego 4)
     Route::middleware('juego:4')->group(function () {
         Route::get('/games/constelacion', [ControllerConstelaciones::class, 'index'])->name('game.constelaciones');
-        Route::get('/games/constelacion/inventario', [ControllerInventario::class, 'index']);
+        Route::get('/games/constelacion/inventario', [ControllerInventario::class, 'index'])->name('game.constelaciones.inventario');
     });
 });
