@@ -35,3 +35,16 @@ body {
     height: 20px;
     flex-shrink: 0;
 }
+
+.nivel-tooltip {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.nivel-item:hover .nivel-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}

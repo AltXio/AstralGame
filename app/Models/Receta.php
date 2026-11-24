@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\ElementoQuimico;
+use App\Models\Nivel;
 use App\Models\Signo;
 use App\Models\UsuarioReceta;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ class Receta extends Model
     //
     protected $table = 'recetas';
     public $timestamps = false;
-    protected $fillable = ['id_signo', 'id_elemento_quimico', 'titulo', 'descripcion'];
+    protected $fillable = ['id_signo', 'id_elemento_quimico', 'id_nivel', 'titulo', 'descripcion'];
 
     public function elementoQuimico(): BelongsTo
     {
@@ -24,6 +25,11 @@ class Receta extends Model
     public function signo(): BelongsTo
     {
         return $this->belongsTo(Signo::class, 'id_signo');
+    }
+
+    public function nivel(): BelongsTo
+    {
+        return $this->belongsTo(Nivel::class, 'id_nivel');
     }
 
     public function usuarioRecetas(): HasMany

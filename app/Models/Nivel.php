@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Juego;
+use App\Models\Receta;
 use App\Models\Sesion;
 use App\Models\UsuarioReceta;
 use Illuminate\Database\Eloquent\Model;
@@ -12,9 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Nivel extends Model
 {
     protected $table = 'niveles';
-
     public $timestamps = false;
-
     protected $fillable = ['id_juego', 'nombre'];
 
     public function juego(): BelongsTo
@@ -30,5 +29,10 @@ class Nivel extends Model
     public function usuarioRecetas(): HasMany
     {
         return $this->hasMany(UsuarioReceta::class, 'id_nivel');
+    }
+
+    public function recetas(): HasMany
+    {
+        return $this->hasMany(Receta::class, 'id_nivel');
     }
 }
