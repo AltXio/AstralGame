@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @vite(['resources/css/constelacion.css', 'resources/js/constelacionJuego.js'])
+    @vite(['resources/css/constelacion.css', 'resources/js/constelacionJuego.js', 'resources/css/app.css', 'resources/js/app.js'])
     <title>Constelaciones</title>
 </head>
 
@@ -18,15 +18,19 @@
 
         <!-- Canvas de fondo fijado al fondo de la pantalla -->
         <canvas id="cosmic-bg-canvas" class="fixed inset-0 -z-10 w-full h-full pointer-events-none"></canvas>
-        
-        <header>
-            <h2>Constelaciones</h2>
 
-            <div class="tabs"><button class="on" id="jugar">Jugar</button>
-                <button id="inventario"> Inventario</button>
-            </div>
-        </header>
+
+
+
         <main>
+            <div class="header">
+                <h2>Constelaciones</h2>
+
+                <div class="tabs">
+                    <button class="on" id="jugar">Jugar</button>
+                    <button id="inventario">Inventario</button>
+                </div>
+            </div>
             <div class="top">
                 <div class="small">
                     <h2 id="title"></h2>
@@ -98,15 +102,9 @@
                 </div>
             </section>
         </main>
-        <div class="modal" id="modal">
-            <div class="mbox">
-                <div id="mArt"></div>
-                <h2 id="mT"></h2>
-                <p id="mP"></p><button class="primary" id="mX">Continuar</button>
-            </div>
-        </div>
-
-
+        <footer class="relative z-10">
+            <x-footer />
+        </footer>
 
     </body>
 

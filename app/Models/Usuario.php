@@ -7,7 +7,7 @@ use App\Models\Juego;
 use App\Models\PlanetaCreado;
 use App\Models\Rol;
 use App\Models\Sesion;
-use App\Models\UsuarioReceta;
+use App\Models\UsuariosReceta;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -79,18 +79,18 @@ class Usuario extends Authenticatable
     /** Orbitas para el juego 2 (musical) */
     public function partituraOrbitas()
     {
-        return $this->hasMany(PartituraOrbita::class);
+        return $this->hasMany(PartituraOrbita::class, 'user_id');
     }
 
     /** recetas para el juego 3 (cartas) */
     public function usuarioRecetas(): HasMany
     {
-        return $this->hasMany(UsuarioReceta::class, 'id_usuario');
+        return $this->hasMany(UsuariosReceta::class, 'id_usuario');
     }
     
      //usuarrio M-- constelacion N
     public function Constelaciones(): BelongsToMany
     {
-        return $this->BelongsToMany(Constelaciones::class, 'constelaciones', 'id_constelacion', 'id_usuario');
+        return $this->belongsToMany(Constelaciones::class, 'usuarios_constelaciones', 'id_usuario', 'id_constelacion');
     }
 }

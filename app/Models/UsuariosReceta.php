@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UsuarioReceta extends Model
+class UsuariosReceta extends Model
 {
     protected $table = 'usuarios_recetas';
     protected $primaryKey = null;

@@ -10,23 +10,24 @@ use Illuminate\Database\Eloquent\Model;
 class CuerposCelestes extends Model
 {
     protected $table = 'cuerpos_celestes';
-    public $timestamps = false;
-    public $primaryKey = 'id';
+    protected $primaryKey = 'id';
     public $incrementing = true;
-    public $nombre = 'nombre';
-    public $temperatura = 'temperatura';
-    public $descripcion = 'descripcion';
 
+    protected $fillable = [
+        'nombre',
+        'temperatura',
+        'descripcion'
+    ];
 
     //constelacion1_ cuerposceleste N
     public function constelaciones(): BelongsTo
     {
-        return $this->BelongsTo(Constelaciones::class, 'id');
+        return $this->belongsTo(Constelaciones::class, 'id_constelacion');
     }
 
     //CUERPOSCELESTES m-- elementoquimico N
     public function ElementoQuimico(): BelongsToMany
     {
-        return $this->BelongsToMany(ElementoQuimico::class, 'elementos_quimicos', 'id_elemento_quimico', 'id_cuerpo_celeste');
+        return $this->belongsToMany(ElementoQuimico::class, 'cuerpos_celestes_elementos_quimicos', 'id_cuerpo_celeste','id_elemento_quimico');
     }
 }

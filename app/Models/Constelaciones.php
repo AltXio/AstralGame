@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -11,19 +12,24 @@ class Constelaciones extends Model
     protected $table = 'constelaciones';
     public $timestamps = false;
     protected $primaryKey = 'id';
-    public $incrementing = true;
-    public $descripcionCientifica = 'descripcion_cientifica';
-    public $descripcionMitologica = 'descripcion_mitologica';
+
+    protected $fillable = ['nombre', 'alias', 'descripcion_cientifica', 'descripcion_mitologica'];
 
     //constelacion1_ cuerposceleste N
     public function CuerposCelestes(): HasMany
     {
-        return $this->HasMany(CuerposCelestes::class, 'id');
+        return $this->hasMany(CuerposCelestes::class, 'id_constelacion');
     }
 
     //usuarrio M-- constelacion N
-     public function Usuario(): BelongsToMany
+    public function Usuario(): BelongsToMany
     {
-        return $this->BelongsToMany(Usuario::class, 'usuarios', 'id_usuario','id_constelacion');
+        return $this->belongsToMany(Usuario::class, 'usuarios_constelaciones', 'id_constelacion', 'id_usuario');
+    }
+
+
+    public function Nivel(): BelongsTo
+    {
+        return $this->belongsTo(Nivel::class, 'id_nivel');
     }
 }

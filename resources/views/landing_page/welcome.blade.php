@@ -27,6 +27,9 @@
 
     <!-- ================= SECCIÓN PRINCIPAL MAIN ================= -->
     <main class="relative z-10 grow flex flex-col items-center justify-center px-4 py-8 max-w-6xl mx-auto w-full">
+        @if (session('bloqueado'))
+            <p class="mb-4 px-4 py-2 rounded-lg border border-amber-400/60 bg-amber-500/10 text-amber-200 text-xs">{{ session('bloqueado') }}</p>
+        @endif
 
         <!-- 1. CONTENEDOR TITULAR (Arriba) -->
         <div class="text-center mb-8">
@@ -131,17 +134,13 @@
                 </div>
 
                 <!-- NODO INFERIOR (QUINTO ELEMENTO) -->
-                <div
-                    style="position: absolute; top: 82%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; z-index: 10;">
-                    <div
-                        class="w-full h-full rounded-full bg-slate-900 border-2 border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.7)] flex items-center justify-center overflow-hidden relative">
-                        <img src="{{ asset('images/nodo-alquimia-bg-r.png') }}" alt="Elemento"
-                            onerror="this.style.display='none'" class="w-full h-full object-contain">
-                        <span class="absolute text-emerald-300 font-bold text-[10px] pointer-events-none">ELEM</span>
+                <div style="position: absolute; top: 82%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; z-index: 10;">
+                    <div class="w-full h-full rounded-full bg-slate-900 border-2 border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.7)] flex items-center justify-center overflow-hidden relative">
+                        <img src="{{ asset('images/nodo-alquimia-bg-r.png') }}" alt="Elemento" onerror="this.style.display='none'" class="w-full h-full object-contain">
                     </div>
-                    <button onclick="mostrarJuego(event, 'elemento')"
-                        class="absolute inset-0 rounded-full opacity-0 hover:opacity-100 border-2 border-emerald-300 bg-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.9)] transition-all duration-300 cursor-pointer z-20"
-                        title="Modo Elemento Inferior">
+                    <button onclick="mostrarJuego(event, 'constelacion')" 
+                            class="absolute inset-0 rounded-full opacity-0 hover:opacity-100 border-2 border-emerald-300 bg-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.9)] transition-all duration-300 cursor-pointer z-20"
+                            title="Modo Elemento Inferior">
                     </button>
                 </div>
 
@@ -158,9 +157,8 @@
                 </div>
 
                 <div class="pt-3 border-t border-slate-800">
-                    <a id="game-button" href="#"
-                        class="w-full py-2.5 px-4 rounded-xl font-bold text-center text-xs bg-blue-300 hover:bg-blue-400  transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg">
-                        <span>INICIAR MODO DE JUEGO</span>
+                    <a id="game-button" href="#" class="w-full py-2.5 px-4 rounded-xl font-bold text-center text-xs bg-blue-300 hover:bg-blue-400  transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg">
+                        <span id="game-button-text">INICIAR JUEGO</span>
                     </a>
                 </div>
             </div>
@@ -184,28 +182,31 @@
                 route: '#'
             },
             'alquimia': {
-                badge: 'Combinación Elemental',
-                title: 'MODO ALQUIMIA & OUROBOROS',
-                desc: 'Combina elementos básicos como Fuego, Agua, Tierra y Aire para sintetizar nuevos astros y descubrir recetas místicas[cite: 8].',
-                route: '{{ Route::has('game.alquimia') ? route('game.alquimia') : '#' }}'
+                badge: 'Astronomia Elemental',
+                title: 'Astralquimium',
+                desc: 'Descubre los secretos del universo alquímico que se ocultan en nuestro sistema solar y crea tus nuevos planetas.',
+                route: '{{ route("game.astralquimium.index") }}'
             },
             'zodiaco': {
                 badge: 'Astrofísica Mística',
                 title: 'Astral Recipe',
                 desc: 'Crea diferentes recetas combinando signos astrológicos, elementos quimicos y alquímicos.',
-                route: '{{ route('game.astral') }}'
+                route: '{{ route("game.astral") }}',
+                locked: @json($bloqueado[3])
             },
             'musica': {
                 badge: 'Harmonía Esferas',
                 title: 'MODO PARTITURA & MELODÍA',
                 desc: 'El sistema solar funciona como una partitura circular interactiva basada en frecuencias armónicas[cite: 8].',
-                route: '{{ route('game.musica') }}'
+                route: '{{ route("game.musica") }}',
+                locked: @json($bloqueado[2])
             },
-            'elemento': {
+            'constelacion': {
                 badge: 'Desafío Final',
                 title: 'MODO QUINTO ELEMENTO',
                 desc: 'Equilibra las cargas energéticas del círculo alquímico antes de que la materia se desestabilice por completo[cite: 8].',
-                route: '{{ Route::has('game.elemento') ? route('game.elemento') : '#' }}'
+                route: '{{ route("game.constelaciones") }}',
+                locked: @json($bloqueado[4])
             }
         };
 
@@ -220,7 +221,14 @@
             document.getElementById('game-badge').innerText = info.badge;
             document.getElementById('game-title').innerText = info.title;
             document.getElementById('game-desc').innerText = info.desc;
-            document.getElementById('game-button').href = info.route;
+            const boton = document.getElementById('game-button');
+            const textoBoton = document.getElementById('game-button-text');
+            const bloqueado = info.locked === true;
+            boton.href = bloqueado ? '#' : info.route;
+            boton.classList.toggle('opacity-50', bloqueado);
+            boton.classList.toggle('pointer-events-none', bloqueado);
+            boton.setAttribute('aria-disabled', bloqueado ? 'true' : 'false');
+            textoBoton.innerText = bloqueado ? 'BLOQUEADO · COMPLETA EL JUEGO Astralquimium PARA DESBLOQUEAR' : 'INICIAR JUEGO';
 
             // Abrir panel lateral (style inline asegura que flex se active)
             panel.style.display = 'flex';

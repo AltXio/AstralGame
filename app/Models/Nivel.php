@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\Juego;
 use App\Models\Receta;
 use App\Models\Sesion;
-use App\Models\UsuarioReceta;
+use App\Models\UsuariosReceta;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,7 +28,13 @@ class Nivel extends Model
 
     public function usuarioRecetas(): HasMany
     {
-        return $this->hasMany(UsuarioReceta::class, 'id_nivel');
+        return $this->hasMany(UsuariosReceta::class, 'id_nivel');
+    }
+
+
+    public function Constelaciones(): HasMany
+    {
+        return $this->hasMany(Constelaciones::class, 'id_nivel');
     }
 
     public function recetas(): HasMany
