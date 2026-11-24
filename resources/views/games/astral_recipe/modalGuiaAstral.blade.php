@@ -31,25 +31,25 @@
                                 @switch($signo->id_elemento_alquimico)
                                     @case(1)
                                         <div class="flex items-center gap-2 text-red-400">
-                                            <img src="{{ asset('images/elementos/fuego.svg') }}" alt="Foc"
+                                            <img src="{{ asset('images/elementos/fuego.svg') }}" alt="Fuego"
                                                 class="guia-elemento-icon">
-                                            <span>Foc</span>
+                                            <span>Fuego</span>
                                         </div>
                                     @break
 
                                     @case(2)
                                         <div class="flex items-center gap-2 text-blue-400">
-                                            <img src="{{ asset('images/elementos/agua.svg') }}" alt="Aigua"
+                                            <img src="{{ asset('images/elementos/agua.svg') }}" alt="Agua"
                                                 class="guia-elemento-icon">
-                                            <span>Aigua</span>
+                                            <span>Agua</span>
                                         </div>
                                     @break
 
                                     @case(3)
                                         <div class="flex items-center gap-2 text-green-400">
-                                            <img src="{{ asset('images/elementos/tierra.svg') }}" alt="Terra"
+                                            <img src="{{ asset('images/elementos/tierra.svg') }}" alt="Tierra"
                                                 class="guia-elemento-icon">
-                                            <span>Terra</span>
+                                            <span>Tierra</span>
                                         </div>
                                     @break
 
