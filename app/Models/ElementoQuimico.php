@@ -54,9 +54,11 @@ class ElementoQuimico extends Model
         return $this->hasMany(Receta::class, 'id_elemento_quimico');
     }
 
-//CUERPOSCELESTES m-- elementoquimico N elementos_quimicos-cuerpos_celestes
-    public function CuerposCelestes(): BelongsToMany
+    //CUERPOSCELESTES m-- elementoquimico N elementos_quimicos-cuerpos_celestes
+    public function elementosQuimicos(): BelongsToMany
     {
-        return $this->BelongsToMany(CuerposCelestes::class, 'cuerpos_celestes_elementos_quimicos','id_elemento_quimico', 'id_cuerpo_celeste');
+        return $this->belongsToMany(ElementoQuimico::class, 'cuerpos_celestes_elementos_quimicos', 'id_cuerpo_celeste', 'id_elemento_quimico')
+            ->withPivot('orden')
+            ->orderBy('cuerpos_celestes_elementos_quimicos.orden');
     }
 }

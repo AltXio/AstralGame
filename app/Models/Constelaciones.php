@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Constelaciones extends Model
 {
@@ -30,6 +31,7 @@ class Constelaciones extends Model
 
     public function Nivel(): BelongsTo
     {
+        return $this->belongsTo(Nivel::class, 'id_nivel');
         return $this->belongsTo(Nivel::class, 'id_nivel');
     }
 }

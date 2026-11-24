@@ -4,108 +4,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     @vite(['resources/css/constelacion.css', 'resources/js/constelacionJuego.js', 'resources/css/app.css', 'resources/js/app.js'])
     <title>Constelaciones</title>
 </head>
 
 <body>
+    <header class="relative z-20 shrink-0 bg-transparent">
+        <x-header />
+    </header>
 
-    <body>
+    <canvas id="cosmic-bg-canvas" class="fixed inset-0 -z-10 w-full h-full pointer-events-none"></canvas>
 
-        <header class="relative z-20 shrink-0 bg-transparent">
-            <x-header />
-        </header>
+    <main>
+        <div class="header">
+            <h2>Constelaciones</h2>
 
-        <!-- Canvas de fondo fijado al fondo de la pantalla -->
-        <canvas id="cosmic-bg-canvas" class="fixed inset-0 -z-10 w-full h-full pointer-events-none"></canvas>
-
-
-
-
-        <main>
-            <div class="header">
-                <h2>Constelaciones</h2>
-
-                <div class="tabs">
-                    <button class="on" id="jugar">Jugar</button>
-                    <button id="inventario">Inventario</button>
-                </div>
+            <div class="tabs">
+                <button class="on" id="jugar" onclick="window.location.href='{{ route('game.constelaciones') }}'">Jugar</button>
+                <button id="inventario" onclick="window.location.href='{{ route('game.constelaciones.inventario') }}'">Inventario</button>
             </div>
-            <div class="top">
-                <div class="small">
-                    <h2 id="title"></h2>
-                    <p id="descripcionCientifica" class="descripcionCientifica"></p>
+        </div>
+
+        <div id="lista-constelaciones" class="constelaciones">
+            @foreach ($constelaciones as $index => $constelacion)
+                <div class="constelacion-item" data-id="{{ $constelacion->id }}"
+                    data-nombre="{{ $constelacion->nombre }}"
+                    data-descripcion-mitologica="{{ $constelacion->descripcion_mitologica }}"
+                    data-indice="{{ $index }}" data-completada="false">
+
+                    <div class="top">
+                        <div class="small">
+                            <h2>{{ $constelacion->nombre }}</h2>
+                            <span class="texto">
+                                {{ $constelacion->descripcion_cientifica }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="layout play">
+                        <section class="panel">
+                            <div class="sub">
+                                @if ($constelacion->nivel)
+                                    <div class="texto" data-id="{{ $constelacion->nivel->id }}"
+                                        data-nombre="{{ $constelacion->nivel->nombre }}">
+                                        <h2> Nivel {{ $index + 1 }} - {{ $constelacion->nivel->nombre }}</h2>
+                                    </div>
+                                @endif
+                                <span class="texto"> Toca un punto del cielo para recibir una pista y elige el cuerpo
+                                    celeste que encaja.
+                                </span>
+                            </div>
+
+                            <div class="small ins"></div>
+                            <div class="sky"></div>
+
+                            <div class="actions">
+                                <button type="button" class="primary next" disabled>Siguiente →</button>
+                            </div>
+
+                            <div class="fb"></div>
+                        </section>
+
+                        <aside class="panel">
+                            <h2>Cuerpos celestes</h2>
+
+                            <div class="elementos">
+                                <div class="elementos_alquimicos">
+                                    @foreach ($elementosAlquimicos as $elemento)
+                                        <div class="elemento_alquimico" data-id="{{ $elemento->id }}"
+                                            data-nombre="{{ $elemento->nombre }}">
+
+                                            <svg class="elemento-icono" viewBox="0 0 100 100" fill="none"
+                                                stroke="currentColor" stroke-width="4"></svg>
+                                            <span>{{ $elemento->nombre }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="texto">
+                                Cada estrella tiene un mensaje: haz clic para ver su mensaje (otro clic lo oculta) y
+                                arrástrala al punto que coincida con la pista.
+                            </div>
+
+                            <div class="cuerpos_celestes">
+                                @foreach ($constelacion->cuerposCelestes as $cuerpo)
+                                    <div class="card_cuerpo_celeste">
+                                        <div class="cuerpo_celeste" data-id="{{ $cuerpo->id }}"
+                                            data-temperatura="{{ $cuerpo->temperatura }}"
+                                            data-nombre="{{ $cuerpo->nombre }}"
+                                            data-magnitud="{{ $cuerpo->magnitud }}"
+                                            data-anyodescubierto="{{ $cuerpo->anyo_descubierta }}"
+                                            data-descubridor="{{ $cuerpo->descubridor }}"
+                                            data-declinacion="{{ $cuerpo->declinacion }}"
+                                            data-ascension="{{ $cuerpo->ascension_recta }}"
+                                            data-elementos="{{ json_encode($cuerpo->elementosQuimicos) }}">
+
+                                            <div class="orb"></div>
+                                            <div class="small">
+
+                                            </div>
+                                            <div class="info-extra"></div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                        </aside>
+                    </div>
 
                 </div>
-                <div class="count">Nivel 1</div>
-            </div>
+            @endforeach
+        </div>
+    </main>
 
-            <div id="play" class="layout">
-                <section class="panel">
-                    <div class="sub" id="sub">Toca un punto del cielo para recibir una pista y elige el cuerpo
-                        celeste que
-                        encaja.
-                    </div>
-
-                    <div class="small" id="ins"></div>
-                    <div class="sky" id="sky"></div>
-                    <div class="actions">
-                        <button id="reset">Reiniciar</button><button id="next" class="primary"
-                            disabled>Siguiente
-                            →</button>
-                    </div>
-                    <div class="fb" id="fb">
-
-                    </div>
-                </section>
-                <aside class="panel">
-                    <h2>Cuerpos celestes</h2>
-                    <div class="small">Cada estrella tiene un mensaje: haz clic para ver su mensaje (otro clic lo
-                        oculta) y
-                        arrástrala al punto que coincida con la pista.
-                    </div>
-                    <div id="elementos">
-
-                    </div>
-                    <div class="clue" id="clue"></div>
-                    <div class="pieces" id="pieces"></div>
-                    <div class="small" style="margin-top:10px">E</div>
-                </aside>
-            </div>
-
-            <section class="panel" id="inv" style="display:none">
-                <h2>Mi inventario celeste</h2>
-                <div class="small">Toca una constelación completada para ver su historia y sus estrellas.</div>
-                <div class="grid" id="saved"></div>
-                <div id="detail" style="display:none">
-                    <div class="head" style="margin-top:18px">
-                        <h2 id="dTitle"></h2><span style="display:flex;gap:8px"><button id="dArt">Ocultar
-                                dibujo</button><button id="dMel">♫ Melodía</button></span>
-                    </div>
-                    <div class="small" id="dSub"></div>
-                    <div class="big" id="dFig"></div>
-                    <div class="info" id="dStar">
-                        <h4>Toca una estrella de la figura</h4>
-                        <p>Verás su elemento clásico, su temperatura en °C, su elemento predominante y un dato curioso.
-                        </p>
-                    </div>
-                    <div class="info">
-                        <h4>¿Por qué se llama así?</h4>
-                        <p id="dHist"></p>
-                    </div>
-                    <div class="info">
-                        <h4>La constelación</h4>
-                        <p id="dInfo"></p>
-                    </div>
-                    <h3>Estrellas principales</h3>
-                    <div class="stars" id="dStars"></div>
-                </div>
-            </section>
-        </main>
-        <footer class="relative z-10">
-            <x-footer />
-        </footer>
-
-    </body>
+    <footer class="relative z-10">
+        <x-footer />
+    </footer>
+</body>
 
 </html>

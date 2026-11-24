@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Games;
 
 use App\Http\Controllers\Controller;
+use App\Models\Constelaciones;
+use App\Models\ElementoAlquimico;
 use Illuminate\Http\Request;
 
 class ControllerConstelaciones extends Controller
@@ -12,7 +14,17 @@ class ControllerConstelaciones extends Controller
      */
     public function index()
     {
-        return view("games.constelacion.constelaciones");
+        $constelaciones = Constelaciones::with([
+            'nivel',
+            'cuerposCelestes' => function ($query) {
+                $query->orderBy('id');
+            },
+            'cuerposCelestes.elementosQuimicos.elementoAlquimico',
+        ])->orderBy('id')->get()->shuffle();
+
+        $elementosAlquimicos = ElementoAlquimico::orderBy('id')->get();
+
+        return view('games.constelacion.constelaciones', compact('constelaciones', 'elementosAlquimicos'));
     }
 
     /**
