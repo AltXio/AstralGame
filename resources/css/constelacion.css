@@ -7,10 +7,13 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
-.descripcionCientifica{
+.texto{
     margin-top: 10px ;
     margin-bottom: 20px ;
+    color:rgb(238, 233, 233);
+    font-size: 13px;
 }
+
 
 
 .header {
@@ -94,14 +97,7 @@ h1 {
 }
 
 .sub {
-    font: 13px Arial;
-    color: #c3cbe5
-}
-
-.count {
-    text-align: right;
-    font: 11px Arial;
-    color: var(--muted)
+    margin:10px
 }
 
 .count strong {
@@ -113,7 +109,7 @@ h1 {
 button {
     border: 1px solid #59618a;
     background: #171d49;
-    color: #e9e8f7;
+    color:rgb(238, 233, 233);
     padding: 9px 14px;
     border-radius: 20px;
     cursor: pointer;
@@ -141,7 +137,7 @@ button:focus-visible,
 button.on,
 button.primary {
     border-color: #b9a9e8;
-    background: linear-gradient(100deg, #554d83, #303d76)
+    background: l #263268
 }
 
 button:disabled {
@@ -172,8 +168,10 @@ button:disabled {
 h2 {
     font-size: 20px;
     font-weight: 400;
-    margin: 0 0 5px
+    margin: 0 0 5px;
+    color:rgb(238, 233, 233)
 }
+
 
 h3 {
     font-size: 15px;
@@ -181,9 +179,10 @@ h3 {
     margin: 14px 0 6px
 }
 
-.small,.info-extra {
-    font: 12px/1.55 Arial;
-    color: var(--muted)
+.small {
+    font-size: 12px;
+    color:rgb(202, 194, 194);
+    margin:  10px 
 }
 
 .sky {
@@ -282,24 +281,16 @@ h3 {
 .fb.hint {
     color: #f0dca0
 }
-
-.pieces {
+.cuerpos_celestes {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    align-items: stretch;
+    align-items: start;
 }
 
-.prow-container {
+.cuerpo_celeste {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-}
-
-.prow {
-    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     gap: 14px;
@@ -314,7 +305,7 @@ h3 {
     color: #cdd6f4
 }
 
-.piece {
+.card_cuerpo_celeste {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -329,26 +320,32 @@ h3 {
     text-align: center;
 }
 
-.piece .small {
+.card_cuerpo_celeste .small {
     text-align: center;
 }
 
-.piece .small h3 {
+.card_cuerpo_celeste .small h3 {
     margin: 0 0 6px;
     text-align: center;
 }
 
-.piece .small svg {
+.card_cuerpo_celeste .small svg {
     display: block;
     margin: 0 auto;
 }
 
-.piece .info-extra {
+.card_cuerpo_celeste .info-extra {
+    flex-basis: 100%;
+    width: 100%;
     text-align: start;
     margin-top: 8px;
 }
 
-.div_element {
+.card_cuerpo_celeste .info-extra:empty {
+    display: none;
+}
+
+.elementos_alquimicos {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -356,12 +353,19 @@ h3 {
     flex-wrap: wrap;
     margin: 20px 0;
 }
- .triangulos {
+.elemento_alquimico {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 6px;
     text-align: center;
+    color: var(--color, var(--ink));
+    cursor: pointer;
+}
+
+.elemento_alquimico .elemento-icono {
+    width: 52px;
+    height: 52px;
 }
 
 .orb {

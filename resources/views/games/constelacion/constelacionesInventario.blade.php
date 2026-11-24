@@ -14,7 +14,6 @@
         <x-header />
     </header>
 
-    <!-- Canvas de fondo fijado al fondo de la pantalla -->
     <canvas id="cosmic-bg-canvas" class="fixed inset-0 -z-10 w-full h-full pointer-events-none"></canvas>
     <main>
 
@@ -22,8 +21,8 @@
             <h2>Constelaciones</h2>
 
             <div class="tabs">
-                <button class="on" id="jugar">Jugar</button>
-                <button id="inventario">Inventario</button>
+                <button class="on" id="jugar" onclick="window.location.href='{{ route('game.constelaciones') }}'">Jugar</button>
+                <button id="inventario" onclick="window.location.href='{{ route('game.constelaciones.inventario') }}'">Inventario</button>
             </div>
         </div>
         <div class="panel">
@@ -45,7 +44,6 @@
     <footer class="relative z-10">
         <x-footer />
     </footer>
-
 </body>
 
 </html>
