@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Melodia;
 use App\Models\PlanetaCreado;
 use App\Models\PartituraOrbita;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrbitaController extends Controller
 {
     /**
-     * Carga la vista del Juego 2 con los planetas creados por el usuario y sus órbitas guardadas.
+     * Carga la vista del Juego 2 con los planetas del usuario
+     * y todas sus melodías guardadas (con sus órbitas y planetas).
      */
     public function index()
     {
@@ -22,21 +25,28 @@ class OrbitaController extends Controller
             ->where('id_usuario', $userId)
             ->get();
 
-        // 2. Órbitas ya guardadas por este usuario en el Juego 2
-        $orbitasGuardadas = PartituraOrbita::with(['planeta.elementoDominante', 'planeta.elementosQuimicos'])
+        // 2. Melodías guardadas por este usuario con sus órbitas y planetas asociados
+        $melodiasGuardadas = Melodia::with([
+                'orbitas.planeta.elementoDominante',
+                'orbitas.planeta.elementosQuimicos'
+            ])
             ->where('user_id', $userId)
+            ->orderByDesc('id')
             ->get();
 
-        return view('games.musical.musica', compact('planetasDisponibles', 'orbitasGuardadas'));
+        return view('games.musical.musica', compact('planetasDisponibles', 'melodiasGuardadas'));
     }
 
     /**
-     * Guarda o actualiza todas las órbitas del usuario en la base de datos.
+     * Guarda una nueva melodía (o actualiza una existente si se envía id_melodia)
+     * junto con todas sus órbitas y planetas en la base de datos.
      */
     public function guardarOrbitas(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'orbitas' => 'present|array',
+            'id_melodia' => 'nullable|integer|exists:melodias,id',
+            'nombre_melodia' => 'required|string|max:100',
+            'orbitas' => 'required|array|min:1',
             'orbitas.*.id_planeta_creado' => 'required|exists:planetas_creados,id',
             'orbitas.*.numero_orbita' => 'required|integer|min:1|max:15',
             'orbitas.*.angulo' => 'required|numeric',
@@ -44,20 +54,47 @@ class OrbitaController extends Controller
 
         $userId = Auth::id();
 
-        PartituraOrbita::where('user_id', $userId)->delete();
+        $melodia = DB::transaction(function () use ($validated, $userId) {
+            if (!empty($validated['id_melodia'])) {
+                // Actualizar melodía existente del usuario
+                $melodia = Melodia::where('id', $validated['id_melodia'])
+                    ->where('user_id', $userId)
+                    ->firstOrFail();
 
-        foreach ($validated['orbitas'] as $orbita) {
-            PartituraOrbita::create([
-                'user_id' => $userId,
-                'id_planeta_creado' => $orbita['id_planeta_creado'],
-                'numero_orbita' => $orbita['numero_orbita'],
-                'angulo' => $orbita['angulo'],
+                $melodia->update([
+                    'nombre' => $validated['nombre_melodia'],
+                ]);
+
+                // Reemplazar sus órbitas anteriores
+                PartituraOrbita::where('id_melodia', $melodia->id)->delete();
+            } else {
+                // Crear una nueva melodía
+                $melodia = Melodia::create([
+                    'user_id' => $userId,
+                    'nombre' => $validated['nombre_melodia'],
+                ]);
+            }
+
+            foreach ($validated['orbitas'] as $orbita) {
+                PartituraOrbita::create([
+                    'user_id' => $userId,
+                    'id_melodia' => $melodia->id,
+                    'id_planeta_creado' => $orbita['id_planeta_creado'],
+                    'numero_orbita' => $orbita['numero_orbita'],
+                    'angulo' => $orbita['angulo'],
+                ]);
+            }
+
+            return $melodia->load([
+                'orbitas.planeta.elementoDominante',
+                'orbitas.planeta.elementosQuimicos'
             ]);
-        }
+        });
 
         return response()->json([
             'status' => 'ok',
-            'message' => 'Órbitas guardadas correctamente en la base de datos.'
+            'message' => 'Melodía guardada correctamente.',
+            'melodia' => $melodia,
         ]);
     }
 }

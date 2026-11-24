@@ -14,6 +14,7 @@ class PartituraOrbita extends Model
 
     protected $fillable = [
         'user_id',
+        'id_melodia',
         'id_planeta_creado',
         'numero_orbita',
         'angulo',
@@ -27,5 +28,10 @@ class PartituraOrbita extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'user_id');
+    }
+    
+    public function melodia(): BelongsTo
+    {
+        return $this->belongsTo(Melodia::class, 'id_melodia');
     }
 }
