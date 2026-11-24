@@ -13,6 +13,9 @@
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-slate-100">
+    <header class="relative z-20 shrink-0 bg-transparent">
+        <x-header />
+    </header>
     <canvas id="stars" class="fixed inset-0 -z-10 pointer-events-none"></canvas>
 
     <!-- Header -->
