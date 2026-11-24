@@ -24,7 +24,7 @@
                 <h2 class="text-2xl sm:text-3xl font-display text-[#d3dbea] tracking-wider mb-1">
                     ACCESO AL ALMANAQUE
                 </h2>
-                <p class="text-xs text-[#93a0bd]">Ingresa tus credenciales para continuar tu transmutación</p>
+                <p class="text-xs text-[#93a0bd]">Ingresa tus credenciales para continuar tu viaje</p>
             </div>
 
             @if ($errors->any())

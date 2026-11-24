@@ -16,8 +16,23 @@ class CuerposCelestes extends Model
     protected $fillable = [
         'nombre',
         'temperatura',
-        'descripcion'
+        'descripcion',
+        'id_constelacion',
+        'ascension_recta',
+        'declinacion',
+        'magnitud',
+        'anyo_descubierta',
+        'descubridor'
     ];
+
+    protected $casts = [
+        'temperatura'      => 'integer',
+        'ascension_recta'  => 'float',
+        'declinacion'      => 'float',
+        'magnitud'         => 'float',
+        'anyo_descubierta' => 'integer',
+    ];
+
 
     //constelacion1_ cuerposceleste N
     public function constelaciones(): BelongsTo
@@ -26,8 +41,10 @@ class CuerposCelestes extends Model
     }
 
     //CUERPOSCELESTES m-- elementoquimico N
-    public function ElementoQuimico(): BelongsToMany
+    public function elementosQuimicos(): BelongsToMany
     {
-        return $this->belongsToMany(ElementoQuimico::class, 'cuerpos_celestes_elementos_quimicos', 'id_cuerpo_celeste','id_elemento_quimico');
+        return $this->belongsToMany(ElementoQuimico::class, 'cuerpos_celestes_elementos_quimicos', 'id_cuerpo_celeste', 'id_elemento_quimico')
+            ->withPivot('orden')
+            ->orderBy('cuerpos_celestes_elementos_quimicos.orden');
     }
 }

@@ -129,7 +129,7 @@ class PresentacionAstralquimium
         $umbral = config('astralquimium.umbral_desbloqueo');
 
         return $creados >= $umbral
-            ? 'Los Juegos 2 y 3 están desbloqueados.'
-            : 'Crea ' . ($umbral - $creados) . ' más para desbloquear los Juegos 2 y 3.';
+            ? 'Los otros juegos están desbloqueados.'
+            : 'Crea ' . ($umbral - $creados) . ' más para desbloquear todos los juegos.';
     }
 }
