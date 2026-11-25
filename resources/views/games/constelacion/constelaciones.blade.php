@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite(['resources/css/constelacion.css', 'resources/js/constelacionJuego.js', 'resources/css/app.css', 'resources/js/app.js'])
     <title>Constelaciones</title>
 </head>
@@ -21,12 +21,15 @@
             <h2>Constelaciones</h2>
 
             <div class="tabs">
-                <button class="on" id="jugar" onclick="window.location.href='{{ route('game.constelaciones') }}'">Jugar</button>
-                <button id="inventario" onclick="window.location.href='{{ route('game.constelaciones.inventario') }}'">Inventario</button>
+                <button class="on" id="jugar"
+                    onclick="window.location.href='{{ route('game.constelaciones') }}'">Jugar</button>
+                <button id="inventario"
+                    onclick="window.location.href='{{ route('game.constelaciones.inventario') }}'">Inventario</button>
             </div>
         </div>
 
-        <div id="lista-constelaciones" class="constelaciones">
+        <div id="lista-constelaciones" class="constelaciones" data-sesion="{{ $sesionId }}"
+            data-sesion-aviso="{{ route('sesiones.finalizar', '__ID__') }}">
             @foreach ($constelaciones as $index => $constelacion)
                 <div class="constelacion-item" data-id="{{ $constelacion->id }}"
                     data-nombre="{{ $constelacion->nombre }}"
@@ -52,9 +55,13 @@
                                         <h2> Nivel {{ $index + 1 }} - {{ $constelacion->nivel->nombre }}</h2>
                                     </div>
                                 @endif
-                                <span class="texto"> Toca un punto del cielo para recibir una pista y elige el cuerpo
-                                    celeste que encaja.
-                                </span>
+
+                                <div class="final-victoria">
+                                    <span class="texto"> Toca un punto del cielo para recibir una pista y elige el
+                                        cuerpo
+                                        celeste que encaja.
+                                    </span>
+                                </div>
                             </div>
 
                             <div class="small ins"></div>
@@ -71,24 +78,26 @@
                             <h2>Cuerpos celestes</h2>
 
                             <div class="elementos">
-                                <div class="elementos_alquimicos">
-                                    @foreach ($elementosAlquimicos as $elemento)
-                                        <div class="elemento_alquimico" data-id="{{ $elemento->id }}"
-                                            data-nombre="{{ $elemento->nombre }}">
+                                <div class="final-victoria">
+                                    <div class="elementos_alquimicos">
+                                        @foreach ($elementosAlquimicos as $elemento)
+                                            <div class="elemento_alquimico" data-id="{{ $elemento->id }}"
+                                                data-nombre="{{ $elemento->nombre }}">
 
-                                            <svg class="elemento-icono" viewBox="0 0 100 100" fill="none"
-                                                stroke="currentColor" stroke-width="4"></svg>
-                                            <span>{{ $elemento->nombre }}</span>
-                                        </div>
-                                    @endforeach
+                                                <svg class="elemento-icono" viewBox="0 0 100 100" fill="none"
+                                                    stroke="currentColor" stroke-width="4"></svg>
+                                                <span>{{ $elemento->nombre }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="texto">
-                                Cada estrella tiene un mensaje: haz clic para ver su mensaje (otro clic lo oculta) y
-                                arrástrala al punto que coincida con la pista.
+                            <div class="final-victoria">
+                                <div class="texto-victoria">
+                                    Cada estrella tiene un mensaje: haz clic para ver su mensaje (otro clic lo oculta) y
+                                    arrástrala al punto que coincida con la pista.
+                                </div>
                             </div>
-
                             <div class="cuerpos_celestes">
                                 @foreach ($constelacion->cuerposCelestes as $cuerpo)
                                     <div class="card_cuerpo_celeste">

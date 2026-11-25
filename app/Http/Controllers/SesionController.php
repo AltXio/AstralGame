@@ -34,6 +34,15 @@ class SesionController extends Controller
     {
         abort_unless((int) $sesion->id_usuario === (int) $request->user()->id, 403);
 
+        $data = $request->validate([
+            'intentos'   => ['nullable', 'integer', 'min:0'],
+            'errores'    => ['nullable', 'integer', 'min:0'],
+            'ayudas'     => ['nullable', 'integer', 'min:0'],
+            'puntuacion' => ['nullable', 'numeric', 'min:0'],
+            'completada' => ['nullable', 'boolean'],
+        ]);
+
+        $sesion->fill($data);
         $sesion->duracion_segundos = max(0, now()->timestamp - $sesion->fecha_hora_inicio->timestamp);
         $sesion->save();
 

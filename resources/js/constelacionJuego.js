@@ -301,6 +301,8 @@ function dibujarFormaConstelacion(constelacion, colocadas) {
     return svg;
 }
 
+let intentos = 0, errores = 0, ayudas = 0, completada = false;;
+
 const CLAVE_GUARDADO = "constelaciones_guardadas";
 let guardadas = JSON.parse(localStorage.getItem(CLAVE_GUARDADO) || "{}");
 
@@ -364,7 +366,7 @@ function mostrarPistas(indiceI, cont, constelacion) {
 
 function comprobarVictoria(totalPrincipales, constelacion) {
     const target = constelacion || constelacionesData[indiceActual];
-    if (!target) return;
+    if (!target) return false;
 
     const colocadas = target.colocadas || {};
 
@@ -406,23 +408,20 @@ function comprobarVictoria(totalPrincipales, constelacion) {
             console.error("Error al guardar:", error);
         }
 
-        const contenedorPistas = target.elementoDOM ? target.elementoDOM.querySelector(".fb") : document.querySelector(".fb");
+        const contenedorPistas = target.elementoDOM
+            ? target.elementoDOM.querySelector(".fb")
+            : document.querySelector(".fb");
         if (contenedorPistas) {
             contenedorPistas.innerHTML = `<h2>Sabías que:</h2><p>${descripcion}</p>`;
+            completada = true;
         }
 
-        const btnNext = target.elementoDOM ? target.elementoDOM.querySelector(".next") : document.querySelector(".next");
+        const btnNext = target.elementoDOM
+            ? target.elementoDOM.querySelector(".next")
+            : document.querySelector(".next");
 
         if (btnNext) {
             btnNext.disabled = false;
-
-            function reiniciarJuego() {
-                console.log("Juego reiniciado");
-            }
-
-            // const btnReset = document.querySelector(".reset");
-            // btnNext.addEventListener("click", reiniciarJuego);
-
             btnNext.onclick = function () {
                 target.elementoDOM.style.display = "none";
                 indiceActual++;
@@ -430,27 +429,8 @@ function comprobarVictoria(totalPrincipales, constelacion) {
                 if (indiceActual < constelacionesData.length) {
                     const siguiente = constelacionesData[indiceActual];
                     siguiente.elementoDOM.style.display = "";
-                    const nivel = siguiente.elementoDOM.querySelector(".texto");
-                    if (nivel) nivel.textContent = "Nivel " + (indiceActual + 1);
-                    renderizarConstelacion(siguiente);
-                } else {
-                    const lista = document.getElementById("lista-constelaciones");
-                    if (lista) {
-                        lista.innerHTML = "<div class='panel'><h2>¡Enhorabuena!</h2><p>Has completado todas las constelaciones.</p></div>";
-                    }
-                }
-            }
-            btnNext.addEventListener("click", c);
 
-            btnNext.onclick = function () {
-                target.elementoDOM.style.display = "none";
-                indiceActual++;
 
-                if (indiceActual < constelacionesData.length) {
-                    const siguiente = constelacionesData[indiceActual];
-                    siguiente.elementoDOM.style.display = "";
-                    const nivel = siguiente.elementoDOM.querySelector(".texto");
-                    if (nivel) nivel.textContent = "Nivel " + (indiceActual + 1);
                     renderizarConstelacion(siguiente);
                 } else {
                     const lista = document.getElementById("lista-constelaciones");
@@ -460,7 +440,9 @@ function comprobarVictoria(totalPrincipales, constelacion) {
                 }
             };
         }
+        return true;
     }
+    return false;
 }
 
 function renderizarConstelacion(constelacion) {
@@ -490,15 +472,18 @@ function renderizarConstelacion(constelacion) {
         };
 
         nodo.ondrop = function (e) {
+            intentos++;
             e.preventDefault();
-            const piezaIndice = Number(e.dataTransfer.getData("text/plain"));
+            const raw = e.dataTransfer.getData("text/plain");
+            if (raw === "") return;
+            const piezaIndice = Number(raw);
 
             if (piezaIndice === indice) {
                 constelacion.colocadas[indice] = true;
 
                 const cuerpoDOM = constelacion.cuerposCelestes[piezaIndice].elementoDOM;
                 const tarjeta = cuerpoDOM.closest(".card_cuerpo_celeste") || cuerpoDOM;
-                tarjeta.remove();
+                tarjeta.style.display = "none"; // Ocultar en lugar de .remove()
 
                 renderizarConstelacion(constelacion);
 
@@ -506,15 +491,41 @@ function renderizarConstelacion(constelacion) {
                     contenedorFb.innerHTML = "<h2>Genial</h2><p>¡Vamos a por otra!</p>";
                 }
 
-                comprobarVictoria(totalPrincipales, constelacion);
+                const gano = comprobarVictoria(totalPrincipales, constelacion);
+
+                constelacion.elementoDOM.querySelectorAll(".final-victoria").forEach((el) => {
+                    el.hidden = gano;
+                });
+
+                // Al completar la constelación, vuelven a aparecer todas las tarjetas
+                if (gano) {
+                    completada = true;
+        enviarAvisoSesion();
+                    constelacion.cuerposCelestes.forEach((cuerpo, i) => {
+                        if (!cuerpo.elementoDOM) return;
+
+                        const tarjeta = cuerpo.elementoDOM.closest(".card_cuerpo_celeste") || cuerpo.elementoDOM;
+                        const pertenece = Boolean(cuerpo.esPrincipal) || Boolean(constelacion.colocadas[i]);
+
+                        if (pertenece) {
+                            tarjeta.style.display = "";
+                            cuerpo.elementoDOM.draggable = false; // Evita volver a arrastrarlas al consultar su info
+                        } else {
+                            tarjeta.style.display = "none";
+                        }
+                    });
+                }
+
             } else if (contenedorFb) {
                 contenedorFb.innerHTML = "<h2>Ups</h2><p>Esa estrella no va ahí. ¡Prueba con otra!</p>";
+                 errores++;
+                 console.log("Errores: " + errores);
             }
         };
 
         nodo.onclick = function () {
             cont++;
-
+            ayudas++;
             const puntoSeleccionado = contenedorSky.querySelector(".node.seleccionado");
             if (puntoSeleccionado !== null) {
                 puntoSeleccionado.classList.remove("seleccionado");
@@ -601,6 +612,8 @@ constelacionItems.forEach(function (constelacionItem, indiceBucle) {
             magnitud: magnitud,
             esPrincipal: esPrincipal,
             elementos: elementos,
+            anyoDescubierto: anyoDescubierto,   // NUEVO
+            descubridor: descubridor,
             elementoDOM: cuerpoCeleste
         });
 
@@ -693,4 +706,101 @@ constelacionItems.forEach(function (constelacionItem, indiceBucle) {
 let indiceActual = 0;
 if (constelacionesData.length > 0) {
     renderizarConstelacion(constelacionesData[indiceActual]);
+}
+
+function obtenerRutaImagen(datos, id) {
+    if (datos.nombre) {
+        const nombreArchivo = datos.nombre
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "") // Quita tildes ("Orión" -> "orion")
+            .replace(/\s+/g, "");            // Quita espacios ("Osa Mayor" -> "osamayor")
+
+        return `/images/constelacion/${nombreArchivo}.png`;
+    }
+
+    // Respaldo por ID por si algún registro no tuviera nombre
+    const imagenesPorId = {
+        "1": "casiopea.png",
+        "2": "leo.png",
+        "3": "orion.png",
+        "4": "osamayor.png"
+    };
+
+    return `/images/constelacion/${imagenesPorId[id] || ""}`;
+}
+
+function cargarInventario() {
+    const lista = document.getElementById("lista");
+    if (!lista) return;
+
+    const guardadas = JSON.parse(localStorage.getItem(CLAVE_GUARDADO)) || {};
+    const idsCompletados = Object.keys(guardadas);
+
+    lista.innerHTML = "";
+
+    idsCompletados.forEach((id) => {
+        const datos = guardadas[id];
+        const rutaImagen = obtenerRutaImagen(datos, id);
+
+        const card = document.createElement("div");
+        card.className = "panel inv-card";
+        card.style.cursor = "pointer";
+
+        card.innerHTML = `
+            <h3>${datos.nombre || "Constelación " + id}</h3>
+            <div class="inv-imagen" hidden>
+                <img src="${rutaImagen}" alt="${datos.nombre || id}">
+            </div>
+        `;
+
+        const contenedorImg = card.querySelector(".inv-imagen");
+        card.onclick = function () {
+            contenedorImg.hidden = !contenedorImg.hidden;
+        };
+
+        lista.appendChild(card);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", cargarInventario);
+
+const raiz = document.querySelector('#lista-constelaciones');
+const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+const sesionId = raiz?.dataset.sesion;
+const urlAviso = raiz?.dataset.sesionAviso;
+
+function enviarAvisoSesion() {
+    if (!sesionId || !urlAviso) {
+        console.warn('Falta data-sesion o data-sesion-aviso en #lista-constelaciones');
+        return;
+    }
+
+    fetch(urlAviso.replace('__ID__', sesionId), {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrf,
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({
+            intentos,
+            errores,
+            ayudas,
+            completada,
+        }),
+        keepalive: true,
+    }).catch((err) => console.error('Error guardando sesión:', err));
+}
+
+if (sesionId) {
+    setInterval(() => {
+        if (!document.hidden) enviarAvisoSesion();
+    }, 60000);
+
+    addEventListener('pagehide', enviarAvisoSesion);
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) enviarAvisoSesion();
+    });
 }
