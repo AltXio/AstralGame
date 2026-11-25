@@ -16,16 +16,17 @@ class SesionJuego
     /**
      * Devuelve la sesión vigente o abre una nueva.
      *
+     * @param  array  $inicial  valores de partida de las métricas del juego (p. ej. contadores a 0)
      * @return array{0: Sesion, 1: bool}  la sesión y si es nueva
      */
-    public function abrir(Usuario $user, int $idJuego, ?int $idNivel = null): array
+    public function abrir(Usuario $user, int $idJuego, ?int $idNivel = null, array $inicial = []): array
     {
         $existente = $this->actual($user, $idJuego, $idNivel);
         if ($existente) {
             return [$existente, false];
         }
 
-        $sesion = Sesion::create([
+        $sesion = Sesion::create($inicial + [
             'id_usuario' => $user->id,
             'id_juego' => $idJuego,
             'id_nivel' => $idNivel,

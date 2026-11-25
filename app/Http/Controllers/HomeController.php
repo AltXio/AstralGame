@@ -13,6 +13,7 @@ class HomeController extends Controller
     {
         return view('landing_page.welcome', [
             'bloqueado' => array_map(fn ($abierto) => ! $abierto, $progreso->estado($request->user())),
+            'esAdmin' => (bool) $request->user()?->esAdmin(),
         ]);
     }
 }
