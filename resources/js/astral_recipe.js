@@ -63,11 +63,23 @@ document.addEventListener("DOMContentLoaded", () => {
     // Logica joc
     if (!window.GAME_DATA) return;
 
-    const { recetas, signos, assetUrl, nivelActualId } = window.GAME_DATA;
+    const {
+        recetas,
+        signos,
+        assetUrl,
+        nivelActualId,
+        urlCompletar,
+        urlSesion,
+        urlResultado,
+    } = window.GAME_DATA;
 
+    // Variables d'estat del joc i sessió
     let indiceRecetaActual = 0;
     let puntuacion = 0;
     let bloqueado = false;
+    let sesionId = null;
+    let errores = 0;
+    let intentos = 0;
 
     // Elements del DOM
     const elTitulo = document.getElementById("receta-titulo");
@@ -87,6 +99,15 @@ document.addEventListener("DOMContentLoaded", () => {
         Aire: "border-amber-300 from-amber-500/20 to-amber-900/20",
         Agua: "border-blue-400 from-blue-500/20 to-blue-900/20",
     };
+
+    function headersJson() {
+        return {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                ?.content,
+        };
+    }
 
     // 1. Carregar la recepta actual a la pantalla
     function cargarReceta(indice) {
@@ -244,12 +265,15 @@ document.addEventListener("DOMContentLoaded", () => {
     function comprobarRespuesta(idSignoSoltado) {
         const recetaActual = recetas[indiceRecetaActual];
         const idEsperado = Number(recetaActual.id_signo);
+        intentos++;
 
         if (Number(idSignoSoltado) === idEsperado) {
             // ENCERT!
             bloqueado = true;
             puntuacion += 100;
             if (elScore) elScore.textContent = puntuacion;
+
+            guardarReceta(recetaActual.id);
 
             elDropZone.classList.add("border-emerald-400", "bg-emerald-500/20");
             elDropText.innerHTML = `<span class="text-emerald-300 font-semibold">¡Correcto!</span>`;
@@ -259,9 +283,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 cargarReceta(indiceRecetaActual);
             }, 1200);
         } else {
-            // ERROR!
+            // ERROR: resta 10 punts (sense baixar de 0) i suma 1 error
+            errores++;
+            puntuacion = Math.max(0, puntuacion - 10);
+            if (elScore) elScore.textContent = puntuacion;
+
             elDropZone.classList.add("border-red-500", "animate-bounce");
-            elDropText.innerHTML = `<span class="text-red-400">Elementos inestables...</span>`;
+            elDropText.innerHTML = `<span class="text-red-400">Elementos inestables... -10</span>`;
 
             setTimeout(() => {
                 elDropZone.classList.remove("border-red-500", "animate-bounce");
@@ -271,6 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function mostrarVictoria() {
+        enviarResultado(true);
         if (elTitulo) elTitulo.textContent = "¡Nivel Completado!";
         if (elDescripcion)
             elDescripcion.textContent = `Has transmutado todas las recetas con éxito. Puntuación final: ${puntuacion}`;
@@ -278,8 +307,64 @@ document.addEventListener("DOMContentLoaded", () => {
         if (elDropText) elDropText.textContent = "✦ Maestría Alquímica ✦";
     }
 
-    // Iniciar el joc
+    // Guardar recepta completada a la BDD
+    function guardarReceta(idReceta) {
+        fetch(urlCompletar, {
+            method: "POST",
+            headers: headersJson(),
+            body: JSON.stringify({
+                id_receta: idReceta,
+                id_nivel: nivelActualId,
+            }),
+        }).catch((err) =>
+            console.error("No s'ha pogut guardar la recepta", err),
+        );
+    }
+
+    // Iniciar sessió de joc a la BDD
+    async function iniciarSesion() {
+        try {
+            const res = await fetch(urlSesion, {
+                method: "POST",
+                headers: headersJson(),
+                body: JSON.stringify({ id_juego: 3, id_nivel: nivelActualId }),
+            });
+            const data = await res.json();
+            sesionId = data.id;
+        } catch (err) {
+            console.error("No s'ha pogut iniciar la sessió", err);
+        }
+    }
+
+    // Avís d'activitat cada minut per mantenir duracion_segundos actualitzada
+    setInterval(() => {
+        if (!sesionId) return;
+        fetch(`${urlSesion}/${sesionId}`, {
+            method: "PATCH",
+            headers: headersJson(),
+        }).catch(() => {});
+    }, 60000);
+
+    // Enviar resultat final de la partida
+    function enviarResultado(completada) {
+        if (!sesionId) return;
+        fetch(`${urlResultado}/${sesionId}`, {
+            method: "PATCH",
+            headers: headersJson(),
+            body: JSON.stringify({
+                puntuacion: puntuacion,
+                errores: errores,
+                intentos: intentos,
+                completada: completada,
+            }),
+        }).catch((err) =>
+            console.error("No s'ha pogut guardar el resultat", err),
+        );
+    }
+
+    // Iniciar el joc només si hi ha receptes disponibles
     if (recetas && recetas.length > 0) {
+        iniciarSesion();
         cargarReceta(0);
     } else if (elTitulo) {
         elTitulo.textContent = "No hay recetas disponibles";
