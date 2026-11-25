@@ -10,6 +10,7 @@ return [
     'max_partes' => 12,
     'umbral_desbloqueo' => 4,          // planetas creados para terminar el juego 1 y desbloquear los demás
     'juegos_desbloqueados' => [2, 3, 4],  // ids de la tabla juegos: al terminar el juego 1 se abren todos
+    'umbral_habitable' => 50,          // % de habitabilidad desde el que un planeta cuenta como habitable (el resto cuenta como error)
     'id_juego' => 1,
     'inactividad_segundos' => 600,     // 10 minutos sin actividad cierran la sesión
 
