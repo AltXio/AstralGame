@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Astral Recipe</title>
     @vite(['resources/css/astral_recipe.css', 'resources/js/astral_recipe.js'])
     <link rel="icon" type="image/x-icon" href="{{ asset('images/nodo-zodiaco-bg-r.png') }}">
@@ -135,7 +136,7 @@
 
                 <!-- Guia basica permanent -->
                 <p class="text-indigo-300 text-sm mb-6">
-                    Haz coincidir el color i el metal con una carta.
+                    Haz coincidir el color y el metal con una carta.
                 </p>
             </section>
 
@@ -152,6 +153,7 @@
             </div>
         </section>
     </main>
+
     <!-- Modal Guia -->
     @include('games.astral_recipe.modalGuiaAstral')
 
@@ -160,7 +162,10 @@
             recetas: @json($recetas),
             signos: @json($signos),
             assetUrl: "{{ asset('') }}",
-            nivelActualId: Number({{ $nivelActualId }})
+            nivelActualId: Number({{ $nivelActualId }}),
+            urlCompletar: "{{ route('game.astral.completar') }}",
+            urlSesion: "{{ route('sesiones.iniciar') }}",
+            urlResultado: "{{ url('/games/astral/sesion') }}"
         };
     </script>
 </body>

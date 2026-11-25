@@ -55,6 +55,8 @@ Route::middleware(['auth'])->group(function () {
     // Astral Recipe (juego 3)
     Route::middleware('juego:3')->group(function () {
         Route::get('/games/astral', [AstralRecipeController::class, 'index'])->name('game.astral');
+        Route::post('/games/astral/recetas/completar', [AstralRecipeController::class, 'completarReceta'])->name('game.astral.completar');
+        Route::patch('/games/astral/sesion/{sesion}', [AstralRecipeController::class, 'guardarResultado'])->name('game.astral.sesion');
     });
 
     // Constelaciones (juego 4)
