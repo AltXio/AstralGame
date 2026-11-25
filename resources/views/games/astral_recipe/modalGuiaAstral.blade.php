@@ -10,7 +10,7 @@
         border-indigo-400/20 bg-[#0f0c46] p-7 shadow-2xl">
 
             <h2 class="font-title mb-5 text-center text-3xl text-white">
-                Guia de l’alquimista
+                Guia alquimista
             </h2>
 
             <table class="w-full text-[15px] text-slate-200">
@@ -77,7 +77,7 @@
             <div class="mt-5 flex justify-center">
                 <button id="close-guia"
                     class="rounded-full border border-slate-300 px-8 py-3 transition hover:bg-white/10">
-                    Tancar
+                    Cerrar
                 </button>
             </div>
         </div>
