@@ -79,6 +79,9 @@ class AstralquimiumController extends Controller
     {
         $request->user()->inventario()->syncWithoutDetaching([$elemento->id]);
 
+        // Cada vez que el jugador abre la ficha de un elemento cuenta como una ayuda consultada
+        $this->sumarEnSesion($request->user(), 'ayudas');
+
         return response()->json(['id' => $elemento->id]);
     }
 
@@ -110,7 +113,7 @@ class AstralquimiumController extends Controller
             $planeta = PlanetaCreado::create([
                 'id_usuario' => $user->id,
                 'nombre' => $nombre,
-                'habitabilidad' => $ev['habit'] >= 50,
+                'habitabilidad' => $ev['habit'] >= config('astralquimium.umbral_habitable'),
                 'id_elemento_alquimico' => $dominante?->id,
             ]);
             $planeta->elementosQuimicos()->attach(
@@ -191,7 +194,10 @@ class AstralquimiumController extends Controller
      */
     private function entrar(Usuario $user): Sesion
     {
-        [$sesion, $nueva] = $this->sesiones->abrir($user, config('astralquimium.id_juego'));
+        // Las métricas de esta partida empiezan a 0 (y no a NULL) para poder promediarlas
+        [$sesion, $nueva] = $this->sesiones->abrir($user, config('astralquimium.id_juego'), null, [
+            'puntuacion' => 0, 'intentos' => 0, 'errores' => 0, 'ayudas' => 0,
+        ]);
         if ($nueva) {
             $user->inventario()->detach();
         }
@@ -199,7 +205,11 @@ class AstralquimiumController extends Controller
         return $sesion;
     }
 
-    /** Suma un planeta a las métricas de la sesión activa (intentos, mejor habitabilidad, completada). */
+    /**
+     * Suma un planeta creado a las métricas de la sesión activa:
+     *   intentos = planetas creados, errores = planetas no habitables,
+     *   puntuacion = mejor habitabilidad conseguida, completada = se alcanzó el umbral de planetas.
+     */
     private function registrarEnSesion(Usuario $user, int $habitabilidad, bool $completada): void
     {
         $sesion = $this->sesiones->actual($user, config('astralquimium.id_juego'));
@@ -207,8 +217,21 @@ class AstralquimiumController extends Controller
             return;
         }
         $sesion->intentos = ($sesion->intentos ?? 0) + 1;
+        if ($habitabilidad < config('astralquimium.umbral_habitable')) {
+            $sesion->errores = ($sesion->errores ?? 0) + 1;
+        }
         $sesion->puntuacion = max((float) $sesion->puntuacion, $habitabilidad);
         $sesion->completada = $sesion->completada || $completada;
         $sesion->save();
+    }
+
+    /** Suma 1 a un contador (errores, ayudas...) de la sesión activa del juego. */
+    private function sumarEnSesion(Usuario $user, string $campo): void
+    {
+        $sesion = $this->sesiones->actual($user, config('astralquimium.id_juego'));
+        if ($sesion) {
+            $sesion->{$campo} = ($sesion->{$campo} ?? 0) + 1;
+            $sesion->save();
+        }
     }
 }
