@@ -7,25 +7,33 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
-.texto{
-    margin-top: 10px ;
-    margin-bottom: 20px ;
-    color:rgb(238, 233, 233);
+
+.texto {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    color: rgb(238, 233, 233);
+    font-size: 13px;
+}
+
+.texto-victoria {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    color: rgb(238, 233, 233);
     font-size: 13px;
 }
 
 
-
 .header {
     display: flex;
-    justify-content: space-between; /* Pon "flex-start" con "gap: 20px" si prefieres los botones pegados al título */
+    justify-content: space-between;
+    /* Pon "flex-start" con "gap: 20px" si prefieres los botones pegados al título */
     align-items: center;
     gap: 16px;
     margin-bottom: 16px;
 }
 
 .header h2 {
-    margin: 0;
+    margin: 0 10px;
 }
 
 .header .tabs {
@@ -85,7 +93,7 @@ main {
 .top {
     display: flex;
     justify-content: space-between;
-    align-items:start;
+    align-items: start;
     gap: 16px;
     margin-bottom: 16px
 }
@@ -97,7 +105,11 @@ h1 {
 }
 
 .sub {
-    margin:10px
+    margin: 10px
+}
+
+.final-victoria[hidden] {
+    display: none;
 }
 
 .count strong {
@@ -109,7 +121,7 @@ h1 {
 button {
     border: 1px solid #59618a;
     background: #171d49;
-    color:rgb(238, 233, 233);
+    color: rgb(238, 233, 233);
     padding: 9px 14px;
     border-radius: 20px;
     cursor: pointer;
@@ -122,9 +134,18 @@ button:focus-visible,
     outline-offset: 2px
 }
 
-.piece { cursor: grab; }
-.piece.arrastrando { opacity: .4; }
-.node.sobre .hueco { stroke: #e8cf8a; stroke-width: 2; }
+.piece {
+    cursor: grab;
+}
+
+.piece.arrastrando {
+    opacity: .4;
+}
+
+.node.sobre .hueco {
+    stroke: #e8cf8a;
+    stroke-width: 2;
+}
 
 .node.seleccionado .hueco {
     stroke: #ffd84d;
@@ -169,7 +190,7 @@ h2 {
     font-size: 20px;
     font-weight: 400;
     margin: 0 0 5px;
-    color:rgb(238, 233, 233)
+    color: rgb(238, 233, 233)
 }
 
 
@@ -181,15 +202,15 @@ h3 {
 
 .small {
     font-size: 12px;
-    color:rgb(202, 194, 194);
-    margin:  10px 
+    color: rgb(202, 194, 194);
+    margin: 10px
 }
 
 .sky {
     height: 460px;
     margin-top: 10px;
     border-radius: 12px;
-   
+
     overflow: hidden
 }
 
@@ -281,11 +302,36 @@ h3 {
 .fb.hint {
     color: #f0dca0
 }
+
+.inv-imagen[hidden] {
+    display: none;
+}
+
+.inv-card.bloqueada {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.inv-card.desbloqueada {
+    cursor: pointer;
+}
+
+.inv-imagen img {
+    width: 100%;
+    height: auto;
+    margin-top: 12px;
+    border-radius: 8px;
+    display: block;
+}
+
 .cuerpos_celestes {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     align-items: start;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .cuerpo_celeste {
@@ -353,6 +399,7 @@ h3 {
     flex-wrap: wrap;
     margin: 20px 0;
 }
+
 .elemento_alquimico {
     display: flex;
     flex-direction: column;

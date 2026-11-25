@@ -5,26 +5,32 @@ namespace App\Http\Controllers\Games;
 use App\Http\Controllers\Controller;
 use App\Models\Constelaciones;
 use App\Models\ElementoAlquimico;
+use App\Services\SesionJuego;
 use Illuminate\Http\Request;
 
 class ControllerConstelaciones extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    //usamos with para hacer una carga anticipada, para hacer  las consultas con  
+    // todas las tablas que tengan relacion de las cuales coloco
+    public function index(Request $request, SesionJuego $sesiones)
     {
         $constelaciones = Constelaciones::with([
             'nivel',
-            'cuerposCelestes' => function ($query) {
-                $query->orderBy('id');
-            },
+            'cuerposCelestes' => fn($query) => $query->orderBy('id'),
             'cuerposCelestes.elementosQuimicos.elementoAlquimico',
-        ])->orderBy('id')->get()->shuffle();
+        ])->get()->shuffle();
 
         $elementosAlquimicos = ElementoAlquimico::orderBy('id')->get();
 
-        return view('games.constelacion.constelaciones', compact('constelaciones', 'elementosAlquimicos'));
+        $idNivel = $constelaciones->first()?->id_nivel;
+
+        [$sesion] = $sesiones->abrir($request->user(), 4, $idNivel);
+
+        return view('games.constelacion.constelaciones', [
+            'constelaciones'      => $constelaciones,
+            'elementosAlquimicos' => $elementosAlquimicos,
+            'sesionId'            => $sesion->id,
+        ]);
     }
 
     /**

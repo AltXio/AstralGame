@@ -21,23 +21,17 @@
             <h2>Constelaciones</h2>
 
             <div class="tabs">
-                <button class="on" id="jugar" onclick="window.location.href='{{ route('game.constelaciones') }}'">Jugar</button>
-                <button id="inventario" onclick="window.location.href='{{ route('game.constelaciones.inventario') }}'">Inventario</button>
+                <button class="on" id="jugar"
+                    onclick="window.location.href='{{ route('game.constelaciones') }}'">Jugar</button>
+                <button id="inventario"
+                    onclick="window.location.href='{{ route('game.constelaciones.inventario') }}'">Inventario</button>
             </div>
         </div>
+
         <div class="panel">
             <h1>Inventario</h1>
             <p class="sub">Completa una constelación en el juego para desbloquearla.</p>
             <div id="lista" class="grid"></div>
-        </div>
-
-        <div class="panel" id="detalle" hidden style="margin-top:16px">
-            <h1 id="invTitulo"></h1>
-            <p class="sub" id="invDescripcion"></p>
-            <div id="invFigura" class="sky"></div>
-
-            <h3>Cuerpos celestes</h3>
-            <div id="invCuerpos" class="pieces"></div>
         </div>
     </main>
 
