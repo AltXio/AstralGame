@@ -555,3 +555,93 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPlacedPlanets();
     });
 });
+
+
+/////sesions/////
+let sesionActualId = null;
+let intentosJuego = 0;
+let erroresJuego = 0;
+let ayudasJuego = 0;
+let heartbeatInterval = null;
+
+// 1. Iniciar sesión al abrir el juego
+async function iniciarSesionJuego() {
+    if (!window.SESION_CONFIG) return;
+
+    try {
+        const response = await fetch(window.SESION_CONFIG.urlIniciar, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': window.SESION_CONFIG.csrfToken
+            },
+            body: JSON.stringify({
+                id_juego: window.SESION_CONFIG.idJuego
+                // id_nivel: null (opcional si el juego no tiene niveles)
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            sesionActualId = data.id;
+
+            // Enviar aviso de actividad cada 60s para actualizar duracion_segundos
+            // y evitar el timeout de 10 minutos de SesionJuego
+            heartbeatInterval = setInterval(() => {
+                actualizarSesion(false);
+            }, 60000);
+        }
+    } catch (error) {
+        console.error('Error al iniciar la sesión del juego:', error);
+    }
+}
+
+// 2. Actualizar actividad o finalizar sesión
+function actualizarSesion(completada = false, puntuacion = null, useBeacon = false) {
+    if (!sesionActualId || !window.SESION_CONFIG) return;
+
+    const url = `${window.SESION_CONFIG.urlFinalizarBase}/${sesionActualId}/finalizar`;
+    const payload = {
+        intentos: intentosJuego,
+        errores: erroresJuego,
+        ayudas: ayudasJuego,
+        completada: completada
+    };
+
+    if (puntuacion !== null) {
+        payload.puntuacion = puntuacion;
+    }
+
+    // Si el usuario cierra la pestaña o navega fuera, sendBeacon garantiza el envío
+    if (useBeacon && navigator.sendBeacon) {
+        const formData = new FormData();
+        formData.append('_token', window.SESION_CONFIG.csrfToken);
+        Object.entries(payload).forEach(([key, value]) => {
+            if (value !== null) {
+                formData.append(key, typeof value === 'boolean' ? (value ? '1' : '0') : value);
+            }
+        });
+        navigator.sendBeacon(url, formData);
+        return;
+    }
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': window.SESION_CONFIG.csrfToken
+        },
+        body: JSON.stringify(payload)
+    }).catch(err => console.error('Error actualizando sesión:', err));
+}
+
+// Arrancar la sesión al cargar el DOM
+document.addEventListener('DOMContentLoaded', iniciarSesionJuego);
+
+// Guardar progreso de tiempo al cerrar o cambiar de página
+window.addEventListener('beforeunload', () => {
+    clearInterval(heartbeatInterval);
+    actualizarSesion(false, null, true);
+});

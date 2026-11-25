@@ -82,5 +82,13 @@
             csrfToken: "{{ csrf_token() }}"
         };
     </script>
+    <script>
+        window.SESION_CONFIG = {
+            idJuego: 2,
+            urlIniciar: "{{ route('sesiones.iniciar') }}",
+            urlFinalizarBase: "{{ url('/sesiones') }}",
+            csrfToken: "{{ csrf_token() }}"
+        };
+    </script>
 </body>
 </html>
