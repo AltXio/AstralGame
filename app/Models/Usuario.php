@@ -23,6 +23,22 @@ class Usuario extends Authenticatable
 
     protected $table = 'usuarios';
 
+    // ids de la tabla roles
+    public const ROL_JUGADOR = 1;
+    public const ROL_ADMIN = 2;
+    public const ROL_SUPERADMIN = 3;
+
+    /** Administrador o superadministrador: puede ver las métricas. */
+    public function esAdmin(): bool
+    {
+        return in_array((int) $this->role_id, [self::ROL_ADMIN, self::ROL_SUPERADMIN], true);
+    }
+
+    /** Superadministrador: además gestiona los usuarios administradores. */
+    public function esSuperadmin(): bool
+    {
+        return (int) $this->role_id === self::ROL_SUPERADMIN;
+    }
 
     protected $fillable = [
         'name',

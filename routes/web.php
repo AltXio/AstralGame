@@ -4,6 +4,8 @@ use App\Http\Controllers\Games\AstralRecipeController;
 use App\Http\Controllers\Games\ControllerConstelaciones;
 use App\Http\Controllers\Games\ControllerInventario;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AdministradorController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrbitaController;
@@ -61,5 +63,19 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('juego:4')->group(function () {
         Route::get('/games/constelacion', [ControllerConstelaciones::class, 'index'])->name('game.constelaciones');
         Route::get('/games/constelacion/inventario', [ControllerInventario::class, 'index'])->name('game.constelaciones.inventario');
+    });
+});
+
+
+// Administración: se entra desde el Modo Admin de la landing (solo roles administrador y superadministrador)
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('index');
+    Route::get('/metricas/datos', [AdminController::class, 'datos'])->name('metricas.datos');
+
+    // Altas, bajas y modificaciones de administradores: solo superadministrador
+    Route::middleware('admin:superadmin')->group(function () {
+        Route::resource('administradores', AdministradorController::class)
+            ->parameters(['administradores' => 'administrador'])
+            ->except('show');
     });
 });

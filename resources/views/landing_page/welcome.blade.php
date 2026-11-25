@@ -175,7 +175,10 @@
                 badge: 'Modo Admin',
                 title: 'NÚCLEO DE GESTIÓN',
                 desc: 'El centro neurálgico donde convergen todas las fuerzas elementales.',
-                route: '#'
+                route: '{{ route("admin.index") }}',
+                locked: @json(! $esAdmin),
+                buttonText: 'ENTRAR AL PANEL',
+                lockedText: 'ACCESO SOLO PARA ADMINISTRADORES'
             },
             'alquimia': {
                 badge: 'Astronomia Elemental',
@@ -224,7 +227,9 @@
             boton.classList.toggle('opacity-50', bloqueado);
             boton.classList.toggle('pointer-events-none', bloqueado);
             boton.setAttribute('aria-disabled', bloqueado ? 'true' : 'false');
-            textoBoton.innerText = bloqueado ? 'BLOQUEADO · COMPLETA EL JUEGO Astralquimium PARA DESBLOQUEAR' : 'INICIAR JUEGO';
+            textoBoton.innerText = bloqueado
+                ? (info.lockedText ?? 'BLOQUEADO · COMPLETA EL JUEGO Astralquimium PARA DESBLOQUEAR')
+                : (info.buttonText ?? 'INICIAR JUEGO');
 
             // Abrir panel lateral (style inline asegura que flex se active)
             panel.style.display = 'flex';
