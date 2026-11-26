@@ -21,7 +21,7 @@
 
                             <td class="py-2.5">
                                 <div class="flex items-center gap-2.5">
-                                    <img src="{{ asset('images/signos/' . strtolower($signo->nombre) . '.svg') }}"
+                                    <img src="{{ asset('images/signos/' . $signo->nombre . '.svg') }}"
                                         class="guia-signo-icon" alt="{{ $signo->nombre }}">
                                     {{ $signo->nombre }}
                                 </div>
